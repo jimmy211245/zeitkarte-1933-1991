@@ -61,16 +61,20 @@ function stateHtml(p) {
     </div>`;
 }
 
-/** Karte auf ein Ereignis oder eine Gebietsänderung ausrichten (Platz für die Seitenleiste lassen). */
-export function focusOn(map, kind, it, { force = false, panelOpen = true } = {}) {
-  const padLeft = panelOpen && window.innerWidth > 860 ? 380 : 20;
-  const padding = { top: 70, bottom: 30, left: padLeft, right: 30 };
+/**
+ * Karte auf ein Ereignis oder eine Gebietsänderung ausrichten.
+ * inset: von Kopfzeile, Seitenleiste oder Blatt verdeckte Ränder in Pixeln ({ top, left, bottom }).
+ */
+export function focusOn(map, kind, it, { force = false, inset = { top: 70, left: 20, bottom: 30 } } = {}) {
+  const c = map.getCanvas();
+  const padding = { top: inset.top, bottom: inset.bottom, left: inset.left, right: 30 };
+  // bei sehr niedriger Karte (Handy quer) muss ein Rest sichtbar bleiben
+  padding.bottom = Math.max(20, Math.min(padding.bottom, c.clientHeight - padding.top - 80));
   if (kind === 'event') {
     if (it.lon == null) return;
     const zoom = it.zoom ?? (it.imp === 1 ? 4.6 : 5.4);
     const p = map.project([it.lon, it.lat]);
-    const c = map.getCanvas();
-    const inView = p.x > padLeft + 20 && p.x < c.clientWidth - 40 && p.y > 80 && p.y < c.clientHeight - 40;
+    const inView = p.x > padding.left + 20 && p.x < c.clientWidth - 40 && p.y > padding.top + 10 && p.y < c.clientHeight - padding.bottom - 10;
     if (!force && inView && Math.abs(map.getZoom() - zoom) < 1.6) return;
     map.flyTo({ center: [it.lon, it.lat], zoom: force ? Math.max(zoom, map.getZoom()) : zoom, padding, duration: 1200, essential: true });
   } else if (it.bbox) {

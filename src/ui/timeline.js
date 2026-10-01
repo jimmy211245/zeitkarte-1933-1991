@@ -29,9 +29,7 @@ export function createTimeline({ tape, overview, tooltip, onPick }) {
     tape.width = Math.round(W * dpr); tape.height = Math.round(H * dpr);
     OW = overview.clientWidth; OH = overview.clientHeight;
     overview.width = Math.round(OW * dpr); overview.height = Math.round(OH * dpr);
-    const maxScale = (END - START) / Math.max(200, W * 0.92);
-    scale = Math.min(scale, maxScale);
-    request();
+    setScale(scale);
   }
 
   const xOf = (day) => W / 2 + (day - state.day) / scale;
@@ -177,8 +175,15 @@ export function createTimeline({ tape, overview, tooltip, onPick }) {
   }
 
   // --- Interaktion -------------------------------------------------------------------------
-  function pick(x, y) {
-    let best = null, bestD = 6;
+  const maxScale = () => (END - START) / Math.max(200, W * 0.92);
+  function setScale(s) {
+    scale = Math.min(maxScale(), Math.max(0.02, s));
+    request();
+  }
+
+  // radius: Fangbereich in Pixeln (für Finger größer als für die Maus)
+  function pick(x, y, radius = 6) {
+    let best = null, bestD = radius;
     for (const ev of markers.events) {
       const d = Math.abs(xOf(ev.t) - x);
       if (d < bestD && y > H - 44) { best = { kind: 'event', id: ev.id, t: ev.t }; bestD = d; }
@@ -193,20 +198,39 @@ export function createTimeline({ tape, overview, tooltip, onPick }) {
   }
 
   let drag = null;
+  // Zwei Finger auf dem Band ändern den Maßstab (Ersatz für das Mausrad)
+  const fingers = new Map();
+  let pinch = null;
+  const spread = () => {
+    const [a, b] = [...fingers.values()];
+    return Math.max(20, Math.abs(a - b));
+  };
   tape.addEventListener('pointerdown', (e) => {
     tape.setPointerCapture(e.pointerId);
+    fingers.set(e.pointerId, e.clientX);
+    if (fingers.size === 2) {
+      pinch = { spread: spread(), scale };
+      drag = null;
+      return;
+    }
     drag = { x: e.clientX, day: state.day, moved: false, wasPlaying: state.playing };
     if (state.playing) set({ playing: false });
   });
   tape.addEventListener('pointermove', (e) => {
     const r = tape.getBoundingClientRect();
     const x = e.clientX - r.left, y = e.clientY - r.top;
+    if (pinch && fingers.has(e.pointerId)) {
+      fingers.set(e.pointerId, e.clientX);
+      setScale((pinch.scale * pinch.spread) / spread());
+      return;
+    }
     if (drag) {
       const dx = e.clientX - drag.x;
       if (Math.abs(dx) > 3) drag.moved = true;
       if (drag.moved) set({ day: drag.day - dx * scale });
       return;
     }
+    if (e.pointerType === 'touch') return;
     const h = pick(x, y);
     if ((h && (!hover || h.id !== hover.id || h.kind !== hover.kind)) || (!h && hover)) {
       hover = h;
@@ -214,27 +238,33 @@ export function createTimeline({ tape, overview, tooltip, onPick }) {
       showTooltip(h, x);
     }
   });
+  const release = (e) => {
+    fingers.delete(e.pointerId);
+    if (fingers.size < 2) pinch = null;
+  };
   const end = (e) => {
+    release(e);
     if (!drag) return;
     const r = tape.getBoundingClientRect();
     const x = e.clientX - r.left, y = e.clientY - r.top;
     if (!drag.moved) {
-      const h = pick(x, y);
+      const h = pick(x, y, e.pointerType === 'touch' ? 14 : 6);
       if (h) onPick(h);
       else set({ day: dayOf(x) });
     }
     drag = null;
   };
   tape.addEventListener('pointerup', end);
-  tape.addEventListener('pointercancel', () => (drag = null));
+  tape.addEventListener('pointercancel', (e) => {
+    release(e);
+    drag = null;
+  });
   tape.addEventListener('pointerleave', () => {
     if (hover) { hover = null; request(); showTooltip(null); }
   });
   tape.addEventListener('wheel', (e) => {
     e.preventDefault();
-    const maxScale = (END - START) / Math.max(200, W * 0.92);
-    scale = Math.min(maxScale, Math.max(0.02, scale * Math.exp(e.deltaY * 0.0016)));
-    request();
+    setScale(scale * Math.exp(e.deltaY * 0.0016));
   }, { passive: false });
 
   // Übersicht: klicken oder ziehen springt direkt

@@ -12,6 +12,8 @@ export function createPanel({ events, changes, onFocus }) {
   const searchEl = document.getElementById('search');
   const chipsEl = document.getElementById('chips');
   const panel = document.getElementById('panel');
+  const head = document.getElementById('sheet-head');
+  const peekEl = document.getElementById('peek');
   document.getElementById('count-events').textContent = events.length;
   document.getElementById('count-changes').textContent = changes.length;
 
@@ -19,7 +21,55 @@ export function createPanel({ events, changes, onFocus }) {
   let visible = [];
   let rows = [];
   let lastCurrent = null;
+  let currentIdx = -1;
   let userScrolled = 0;
+
+  // Auf schmalen Bildschirmen ist die Seitenleiste ein Blatt am unteren Rand. Eingeklappt zeigt
+  // es nur das ausgewählte oder zuletzt eingetretene Ereignis.
+  const sheetMq = window.matchMedia('(max-width: 860px)');
+  let sheetOpen = false;
+
+  function setSheet(open) {
+    sheetOpen = open;
+    panel.classList.toggle('open', open);
+    head.setAttribute('aria-expanded', String(open));
+    // eingeklappte Inhalte sind unsichtbar und sollen auch per Tastatur nicht erreichbar sein
+    listWrap.inert = detailEl.inert = sheetMq.matches && !open;
+  }
+  sheetMq.addEventListener('change', () => setSheet(sheetOpen));
+
+  // Tippen klappt um; Wischen nach oben öffnet, nach unten schließt (der Klick danach zählt nicht)
+  let swipeY = null;
+  let swipedAt = 0;
+  head.addEventListener('pointerdown', (e) => {
+    swipeY = e.clientY;
+    head.setPointerCapture(e.pointerId);
+  });
+  head.addEventListener('pointerup', (e) => {
+    if (swipeY == null) return;
+    const dy = e.clientY - swipeY;
+    swipeY = null;
+    if (Math.abs(dy) > 24) {
+      swipedAt = performance.now();
+      setSheet(dy < 0);
+    }
+  });
+  head.addEventListener('pointercancel', () => (swipeY = null));
+  head.addEventListener('click', () => {
+    if (performance.now() - swipedAt > 400) setSheet(!sheetOpen);
+  });
+
+  function updatePeek() {
+    const sel = state.selection;
+    const kind = sel ? sel.kind : state.tab === 'events' ? 'event' : 'change';
+    const it = sel ? byId[sel.kind].get(sel.id) : visible[currentIdx] ?? visible[0];
+    if (!it) {
+      peekEl.innerHTML = '<span class="peek-what">Keine Treffer</span>';
+      return;
+    }
+    const dot = kind === 'event' ? `<span class="dot" style="background:${CATEGORIES[it.cat]?.color}"></span>` : '';
+    peekEl.innerHTML = `<span class="peek-when">${esc(formatShort(it.t))}</span><span class="peek-what">${dot}${esc(it.title)}</span>`;
+  }
 
   // Kategorie-Chips
   function renderChips() {
@@ -74,6 +124,8 @@ export function createPanel({ events, changes, onFocus }) {
     if (visible.length === 0) {
       listEl.innerHTML = `<li class="empty">Keine Treffer. Suchbegriff ändern oder Filter zurücksetzen.</li>`;
       rows = [];
+      currentIdx = -1;
+      updatePeek();
       return;
     }
     let html = '';
@@ -110,8 +162,11 @@ export function createPanel({ events, changes, onFocus }) {
       lastCurrent?.classList.remove('current');
       cur?.classList.add('current');
       lastCurrent = cur;
+      currentIdx = idx;
+      updatePeek();
       if (cur && Date.now() - userScrolled > 2500) {
-        const top = cur.offsetTop - listEl.clientHeight / 3;
+        // offsetTop zählt ab der Seitenleiste, nicht ab dem Listenanfang
+        const top = cur.offsetTop - listEl.offsetTop - listEl.clientHeight / 3;
         listEl.scrollTop = Math.max(0, top);
       }
     }
@@ -126,10 +181,12 @@ export function createPanel({ events, changes, onFocus }) {
     open(kind, Number(row.dataset.id) || row.dataset.id);
   });
 
-  function open(kind, id, { jump = true } = {}) {
+  // reveal: auf schmalen Bildschirmen das Blatt mit der Detailansicht aufklappen
+  function open(kind, id, { jump = true, reveal = true } = {}) {
     const it = byId[kind].get(id);
     if (!it) return;
     set({ selection: { kind, id }, ...(jump ? { day: it.t, playing: false } : {}) });
+    if (reveal && sheetMq.matches) setSheet(true);
     onFocus(kind, it);
   }
 
@@ -195,16 +252,15 @@ export function createPanel({ events, changes, onFocus }) {
     const b = e.target.closest('button');
     if (!b) return;
     const sel = state.selection;
-    if (b.dataset.act === 'back' || b.dataset.act === 'close') set({ selection: null });
-    else if (b.dataset.act === 'fly' && sel) onFocus(sel.kind, byId[sel.kind].get(sel.id), { forceFly: true });
-    else if (b.dataset.nav && sel) open(sel.kind, Number(b.dataset.nav) || b.dataset.nav);
-  });
-
-  // Ein-/Ausklappen
-  const toggle = document.getElementById('panel-toggle');
-  toggle.addEventListener('click', () => {
-    panel.classList.remove('collapsed');
-    toggle.setAttribute('aria-expanded', 'true');
+    // Auf schmalen Bildschirmen geben Schließen und „Auf der Karte zeigen“ die Karte wieder frei
+    if (b.dataset.act === 'back') set({ selection: null });
+    else if (b.dataset.act === 'close') {
+      set({ selection: null });
+      setSheet(false);
+    } else if (b.dataset.act === 'fly' && sel) {
+      setSheet(false);
+      onFocus(sel.kind, byId[sel.kind].get(sel.id), { forceFly: true });
+    } else if (b.dataset.nav && sel) open(sel.kind, Number(b.dataset.nav) || b.dataset.nav);
   });
 
   subscribe((s, changed) => {
@@ -217,11 +273,19 @@ export function createPanel({ events, changes, onFocus }) {
     if (changed.includes('selection')) {
       renderDetail();
       rows.forEach((r) => r.classList.toggle('selected', !!s.selection && String(s.selection.id) === r.dataset.id));
+      updatePeek();
     }
     if (changed.includes('day')) markCurrent();
+    // beim Abspielen soll die Karte frei sein
+    if (changed.includes('playing') && s.playing && sheetMq.matches) setSheet(false);
   });
 
   renderChips();
   renderList();
-  return { open };
+  setSheet(false);
+  return {
+    open,
+    /** Höhe des Bereichs, den das Blatt unten von der Karte verdeckt (0 bei Seitenleiste) */
+    coveredHeight: () => (sheetMq.matches ? (sheetOpen ? panel.offsetHeight : head.offsetHeight) : 0),
+  };
 }

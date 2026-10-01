@@ -22,7 +22,6 @@
       <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2" /><path d="M15 15l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></symbol>
       <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></symbol>
       <symbol id="i-back" viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></symbol>
-      <symbol id="i-list" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h9" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></symbol>
       <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 4l9 5-9 5-9-5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /><path d="M3 13.5l9 5 9-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></symbol>
       <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0113 0c0 4.8-6.5 11-6.5 11z" fill="none" stroke="currentColor" stroke-width="1.8" /><circle cx="12" cy="10" r="2.3" fill="currentColor" /></symbol>
       <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8M17 14v5H5V7h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></symbol>
@@ -54,6 +53,12 @@
         </header>
 
         <aside id="panel" aria-label="Ereignisse und Gebietsänderungen">
+          <!-- nur auf schmalen Bildschirmen: Griff des ausklappbaren Blatts mit dem aktuellen Ereignis -->
+          <button type="button" class="sheet-head" id="sheet-head" aria-expanded="false" aria-controls="panel-list panel-detail">
+            <span class="grip" aria-hidden="true"></span>
+            <span class="peek" id="peek"></span>
+            <svg class="chev" aria-hidden="true"><use href="#i-back" /></svg>
+          </button>
           <div class="panel-list" id="panel-list">
             <div class="tabs" role="tablist">
               <button type="button" role="tab" aria-selected="true" data-tab="events">Ereignisse <span class="count" id="count-events"></span></button>
@@ -68,9 +73,6 @@
           </div>
           <article class="panel-detail" id="panel-detail" hidden></article>
         </aside>
-        <button type="button" class="panel-toggle" id="panel-toggle" aria-controls="panel" aria-expanded="true" title="Liste ein- oder ausblenden">
-          <svg><use href="#i-list" /></svg>
-        </button>
 
         <section class="legend" id="legend" aria-label="Legende"></section>
         <div class="loading" id="loading">Karte wird geladen …</div>

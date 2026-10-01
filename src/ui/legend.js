@@ -22,8 +22,12 @@ export function setBlocLegend(used) {
 }
 
 export function renderLegend(el) {
-  let collapsed = false;
-  try { collapsed = localStorage.getItem('legend-collapsed') === '1'; } catch { /* privat */ }
+  // auf schmalen Bildschirmen anfangs eingeklappt, danach gilt die gemerkte Wahl
+  let collapsed = window.matchMedia('(max-width: 860px)').matches;
+  try {
+    const saved = localStorage.getItem('legend-collapsed');
+    if (saved !== null) collapsed = saved === '1';
+  } catch { /* privat */ }
   const draw = () => {
     const fronts = state.layers.fronts;
     const first = state.mode === 'blocs'

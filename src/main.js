@@ -41,6 +41,11 @@ map.addControl(
     customAttribution: 'Grenzen: <a href="https://icr.ethz.ch/data/cshapes/" target="_blank" rel="noopener">CShapes 2.0</a> (ETH Zürich, CC BY-NC-SA 4.0), ergänzt · Küsten, Flüsse: Natural Earth',
   }),
 );
+// Auf schmalen Bildschirmen startet die Quellenangabe eingeklappt (Knopf „i“), sonst verdeckt sie
+// die Legende; MapLibre selbst klappt sie erst beim ersten Verschieben der Karte ein
+if (window.matchMedia('(max-width: 860px)').matches) {
+  map.once('load', () => map.getContainer().querySelector('.maplibregl-ctrl-attrib')?.classList.remove('maplibregl-compact-show'));
+}
 map.on('styleimagemissing', () => addPatterns(map));
 new ResizeObserver(() => map.resize()).observe(document.getElementById('map'));
 window.__map = map;
@@ -75,15 +80,22 @@ const labelsPromise = getJson('labels.json');
 const [events, changes] = await Promise.all([getJson('events.json'), getJson('changes-list.json')]);
 
 // --- Seitenleiste und Zeitband ----------------------------------------------------------------
-const panelEl = document.getElementById('panel');
 const panel = createPanel({
   events,
   changes,
   onFocus(kind, it, { forceFly = false } = {}) {
     if (!ready) return;
-    focusOn(map, kind, it, { force: forceFly, panelOpen: !panelEl.classList.contains('collapsed') });
+    focusOn(map, kind, it, { force: forceFly, inset: mapInset() });
   },
 });
+
+// Ränder der Karte, die Kopfzeile und Liste verdecken (für das Ausrichten auf ein Ziel)
+function mapInset() {
+  const stage = document.getElementById('stage').getBoundingClientRect();
+  const top = document.querySelector('.masthead').getBoundingClientRect().bottom - stage.top + 12;
+  const covered = panel.coveredHeight();
+  return covered ? { top, left: 20, bottom: covered + 20 } : { top, left: 380, bottom: 30 };
+}
 
 const timeline = createTimeline({
   tape: document.getElementById('tape'),
@@ -174,7 +186,8 @@ function jumpEvent(dir) {
   else for (let i = list.length - 1; i >= 0; i--) if (list[i].t < state.day) { target = list[i]; break; }
   if (target) {
     if (state.tab !== 'events') set({ tab: 'events', categories: null });
-    panel.open('event', target.id);
+    // auf dem Handy bleibt die Karte frei, das Ereignis erscheint im eingeklappten Blatt
+    panel.open('event', target.id, { reveal: false });
   }
 }
 document.getElementById('prev-btn').addEventListener('click', () => jumpEvent(-1));
