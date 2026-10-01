@@ -1,0 +1,24 @@
+{
+  "name": "zeitkarte-1933-1991",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interaktive historische Karte 1933–1991",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:data": "node scripts/build-all.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "module",
+  "dependencies": {
+    "maplibre-gl": "^5.24.0"
+  },
+  "devDependencies": {
+    "@turf/turf": "^7.4.0",
+    "mapshaper": "^0.7.72",
+    "vite": "^8.3.2"
+  }
+}

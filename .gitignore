@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.sites-checkout/
+.sites-checkout-*/
+
+# Rohdaten und Zwischenstände der Datenaufbereitung (siehe README)
+data-raw/
+build/
+
+# Lokale Werkzeugeinstellungen
+.openai/
+.claude/
+
+# System
+.DS_Store
+Thumbs.db
+*.log

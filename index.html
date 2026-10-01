@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zeitkarte 1933–1991</title>
+    <meta name="description" content="Interaktive Karte der Gebietsänderungen und Ereignisse von der Machtübernahme Hitlers bis zum Ende des Kalten Krieges." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23b9cbd2'/%3E%3Cpath d='M6 22c4-9 9-12 20-13-3 5-5 9-4 15-6-4-11-4-16-2z' fill='%23e2c29d' stroke='%23252a31' stroke-width='1.5'/%3E%3Cpath d='M16 3v26' stroke='%23a3262a' stroke-width='2'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wdth,wght@0,62.5..100,300..800;1,62.5..100,300..800&family=Noto+Serif:ital,wdth,wght@0,62.5..100,300..800;1,62.5..100,300..800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z" fill="currentColor" /></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><path d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z" fill="currentColor" /></symbol>
+      <symbol id="i-prev" viewBox="0 0 24 24"><path d="M6 5h2.2v14H6zM19 5v14L9.5 12z" fill="currentColor" /></symbol>
+      <symbol id="i-next" viewBox="0 0 24 24"><path d="M15.8 5H18v14h-2.2zM5 5v14l9.5-7z" fill="currentColor" /></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2" /><path d="M15 15l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></symbol>
+      <symbol id="i-back" viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></symbol>
+      <symbol id="i-list" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h9" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 4l9 5-9 5-9-5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /><path d="M3 13.5l9 5 9-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0113 0c0 4.8-6.5 11-6.5 11z" fill="none" stroke="currentColor" stroke-width="1.8" /><circle cx="12" cy="10" r="2.3" fill="currentColor" /></symbol>
+      <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8M17 14v5H5V7h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8" /><path d="M12 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><circle cx="12" cy="7.6" r="1.2" fill="currentColor" /></symbol>
+    </svg>
+
+    <div id="app">
+      <main id="stage">
+        <div id="map" role="application" aria-label="Historische Karte"></div>
+
+        <header class="masthead">
+          <h1 class="brand">Zeitkarte <span>1933–1991</span></h1>
+          <div class="seg" role="radiogroup" aria-label="Kartenansicht">
+            <button type="button" role="radio" aria-checked="true" data-mode="states">Staaten</button>
+            <button type="button" role="radio" aria-checked="false" data-mode="blocs">Bündnisse</button>
+          </div>
+          <div class="menu-wrap">
+            <button type="button" class="icon-btn" id="layers-btn" aria-expanded="false" aria-controls="layers-menu" title="Ebenen">
+              <svg><use href="#i-layers" /></svg><span>Ebenen</span>
+            </button>
+            <div class="menu" id="layers-menu" hidden>
+              <label><input type="checkbox" data-layer="events" checked /> Ereignisse</label>
+              <label><input type="checkbox" data-layer="changes" checked /> Gebietsänderungen hervorheben</label>
+              <label><input type="checkbox" data-layer="fronts" checked /> Fronten und Besatzung (ungefähr)</label>
+              <label><input type="checkbox" data-layer="rivers" checked /> Flüsse und Seen</label>
+            </div>
+          </div>
+          <button type="button" class="icon-btn" id="about-btn" title="Über diese Karte"><svg><use href="#i-info" /></svg><span>Über</span></button>
+        </header>
+
+        <aside id="panel" aria-label="Ereignisse und Gebietsänderungen">
+          <div class="panel-list" id="panel-list">
+            <div class="tabs" role="tablist">
+              <button type="button" role="tab" aria-selected="true" data-tab="events">Ereignisse <span class="count" id="count-events"></span></button>
+              <button type="button" role="tab" aria-selected="false" data-tab="changes">Gebietsänderungen <span class="count" id="count-changes"></span></button>
+            </div>
+            <div class="search">
+              <svg><use href="#i-search" /></svg>
+              <input type="search" id="search" placeholder="Suchen, z. B. Stalingrad" autocomplete="off" />
+            </div>
+            <div class="chips" id="chips"></div>
+            <ol class="items" id="items"></ol>
+          </div>
+          <article class="panel-detail" id="panel-detail" hidden></article>
+        </aside>
+        <button type="button" class="panel-toggle" id="panel-toggle" aria-controls="panel" aria-expanded="true" title="Liste ein- oder ausblenden">
+          <svg><use href="#i-list" /></svg>
+        </button>
+
+        <section class="legend" id="legend" aria-label="Legende"></section>
+        <div class="loading" id="loading">Karte wird geladen …</div>
+      </main>
+
+      <footer id="dock">
+        <div class="date-block" aria-live="polite">
+          <span class="date-daymonth" id="date-daymonth"></span>
+          <span class="date-year" id="date-year"></span>
+        </div>
+        <div class="transport">
+          <button type="button" class="tbtn" id="prev-btn" title="Vorheriges Ereignis (Bild↑)"><svg><use href="#i-prev" /></svg></button>
+          <button type="button" class="tbtn play" id="play-btn" title="Abspielen (Leertaste)"><svg><use href="#i-play" /></svg></button>
+          <button type="button" class="tbtn" id="next-btn" title="Nächstes Ereignis (Bild↓)"><svg><use href="#i-next" /></svg></button>
+          <select id="speed" title="Geschwindigkeit">
+            <option value="7">1 Woche/s</option>
+            <option value="30">1 Monat/s</option>
+            <option value="91" selected>3 Monate/s</option>
+            <option value="365">1 Jahr/s</option>
+          </select>
+        </div>
+        <div class="tape-wrap">
+          <canvas id="overview" aria-hidden="true"></canvas>
+          <canvas id="tape" tabindex="0" aria-label="Zeitband: ziehen, um die Zeit zu verschieben; Mausrad zum Zoomen"></canvas>
+        </div>
+      </footer>
+    </div>
+
+    <div class="tape-tooltip" id="tape-tooltip" hidden><span class="tt-date"></span><span class="tt-title"></span></div>
+    <dialog id="about"></dialog>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
