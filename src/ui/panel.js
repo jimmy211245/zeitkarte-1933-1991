@@ -82,7 +82,23 @@ export function createPanel({ events, changes, onFocus }) {
         .map(([k, name]) => `<button type="button" class="chip" data-cat="${k}" aria-pressed="${!state.categories || state.categories.has(k)}">${esc(name)}</button>`)
         .join('');
     }
+    updateChipEdges();
   }
+  // Die Kategorien stehen in einer Zeile: weiche Ränder zeigen, auf welcher Seite es weitergeht,
+  // und das Mausrad schiebt die Zeile seitwärts
+  function updateChipEdges() {
+    const max = chipsEl.scrollWidth - chipsEl.clientWidth;
+    chipsEl.classList.toggle('more-left', chipsEl.scrollLeft > 2);
+    chipsEl.classList.toggle('more-right', chipsEl.scrollLeft < max - 2);
+  }
+  chipsEl.addEventListener('scroll', updateChipEdges, { passive: true });
+  new ResizeObserver(updateChipEdges).observe(chipsEl);
+  chipsEl.addEventListener('wheel', (e) => {
+    if (chipsEl.scrollWidth <= chipsEl.clientWidth || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+    e.preventDefault();
+    chipsEl.scrollLeft += e.deltaY;
+  }, { passive: false });
+
   chipsEl.addEventListener('click', (e) => {
     const b = e.target.closest('.chip');
     if (!b) return;

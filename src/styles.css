@@ -22,6 +22,8 @@
 }
 
 * { box-sizing: border-box; }
+/* hidden muss auch gegen eigene display-Regeln gewinnen */
+[hidden] { display: none !important; }
 html, body { margin: 0; height: 100%; }
 body {
   background: var(--sea);
@@ -115,7 +117,6 @@ svg { width: 18px; height: 18px; flex: none; }
   padding: 6px;
   display: grid;
 }
-.menu[hidden] { display: none; }
 .menu label { display: flex; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 4px; cursor: pointer; font-size: 13px; }
 .menu label:hover { background: var(--paper-2); }
 
@@ -137,7 +138,6 @@ svg { width: 18px; height: 18px; flex: none; }
 }
 .sheet-head { display: none; }
 .panel-list { display: flex; flex-direction: column; min-height: 0; flex: 1; }
-.panel-list[hidden] { display: none; }
 
 .tabs { display: flex; border-bottom: 1px solid var(--rule); }
 .tabs button {
@@ -164,8 +164,17 @@ svg { width: 18px; height: 18px; flex: none; }
   background: #fff;
   font-size: 13px;
 }
-.chips { display: flex; flex-wrap: wrap; gap: 5px; padding: 2px 12px 10px; border-bottom: 1px solid var(--rule); }
+/* Kategorien in einer seitwärts wischbaren Zeile; ein weicher Rand zeigt, wo es weitergeht */
+.chips { display: flex; gap: 5px; padding: 2px 12px 10px; border-bottom: 1px solid var(--rule); overflow-x: auto; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chips.more-right { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); }
+.chips.more-left { -webkit-mask-image: linear-gradient(to right, transparent, #000 40px); mask-image: linear-gradient(to right, transparent, #000 40px); }
+.chips.more-left.more-right {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+}
 .chip {
+  flex: none;
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -240,10 +249,11 @@ svg { width: 18px; height: 18px; flex: none; }
 .detail-nav small { display: block; color: var(--ink-3); }
 
 /* --- Legende ------------------------------------------------------------------------------ */
+/* oben rechts unter den Zoomknöpfen; unten rechts bleibt Platz für die Quellenangabe */
 .legend {
   position: absolute;
+  top: 80px;
   right: 12px;
-  bottom: 12px;
   background: rgba(247, 247, 244, 0.94);
   border: 1px solid var(--rule);
   border-radius: var(--radius);
@@ -251,9 +261,11 @@ svg { width: 18px; height: 18px; flex: none; }
   padding: 8px 12px 10px;
   font-size: 12px;
   max-width: 260px;
+  max-height: calc(100% - 92px);
+  overflow-y: auto;
   z-index: 3;
 }
-.legend h2 { font-size: 12px; font-weight: 600; margin: 0 0 6px; color: var(--ink-2); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.legend h2 { font-size: 12px; font-weight: 600; margin: 0 0 6px; color: var(--ink-2); display: flex; justify-content: space-between; align-items: center; gap: 12px; cursor: pointer; }
 .legend ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
 .legend li { display: flex; gap: 8px; align-items: center; }
 .legend .sw { width: 22px; height: 13px; border-radius: 2px; border: 1px solid rgba(37, 42, 49, 0.35); flex: none; }
@@ -339,7 +351,6 @@ svg { width: 18px; height: 18px; flex: none; }
   color: var(--ink-2);
   z-index: 6;
 }
-.loading[hidden] { display: none; }
 
 /* --- Karten-Popups ------------------------------------------------------------------------- */
 .maplibregl-popup-content { border-radius: var(--radius); padding: 10px 12px; box-shadow: var(--shadow); font-family: var(--font-sans); }
@@ -349,6 +360,13 @@ svg { width: 18px; height: 18px; flex: none; }
 .pop-facts b { font-weight: 500; color: var(--ink); }
 .maplibregl-ctrl-group { border-radius: var(--radius) !important; box-shadow: var(--shadow) !important; }
 .maplibregl-ctrl-attrib { font-size: 10.5px; }
+/* Maßstab rechts neben der Seitenleiste statt darunter */
+.maplibregl-ctrl-bottom-left { left: calc(var(--panel-w) + 12px); }
+
+/* mittlere Breiten: Knöpfe der Kopfzeile ohne Beschriftung, damit alles in eine Zeile passt */
+@media (max-width: 1080px) {
+  .icon-btn span { display: none; }
+}
 
 /* --- Dialog "Über" ------------------------------------------------------------------------- */
 dialog#about {
@@ -391,11 +409,10 @@ dialog#about::backdrop { background: rgba(30, 35, 40, 0.35); }
   #about-btn { grid-area: 1 / 3; }
   .seg { grid-area: 2 / 1 / 3 / 4; }
   .icon-btn { padding: 6px 8px; }
-  .icon-btn span { display: none; }
   .menu { left: auto; right: 0; max-width: calc(100vw - 16px); }
 
   /* Legende unten links über dem Blatt; aufgeklappt wächst sie nach oben, der Kopf bleibt stehen */
-  .legend { left: 8px; right: auto; bottom: calc(var(--peek-h) + 8px); padding: 7px 11px; display: flex; flex-direction: column-reverse; }
+  .legend { top: auto; left: 8px; right: auto; bottom: calc(var(--peek-h) + 8px); max-height: calc(100% - var(--peek-h) - 100px); padding: 7px 11px; display: flex; flex-direction: column-reverse; }
   .legend h2 { margin: 0; gap: 10px; }
   .legend ul { margin-bottom: 6px; }
 
@@ -440,10 +457,7 @@ dialog#about::backdrop { background: rgba(30, 35, 40, 0.35); }
   .sheet-head .chev { color: var(--ink-2); transform: rotate(90deg); transition: transform 0.25s ease; }
   #panel.open .sheet-head .chev { transform: rotate(-90deg); }
 
-  /* Kategorien in einer wischbaren Zeile statt in vier umbrechenden */
-  .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 8px; mask-image: linear-gradient(to right, #000 88%, transparent); }
-  .chips::-webkit-scrollbar { display: none; }
-  .chip { flex: none; padding: 4px 10px 4px 8px; font-size: 12px; }
+  .chips { padding-bottom: 8px; }
   /* 16 px verhindert, dass iOS beim Tippen ins Suchfeld hineinzoomt */
   .search input { font-size: 16px; padding-top: 6px; padding-bottom: 6px; }
 
@@ -455,6 +469,11 @@ dialog#about::backdrop { background: rgba(30, 35, 40, 0.35); }
   .transport { border-right: 0; justify-content: flex-end; padding: 0 8px; }
   .tape-wrap { grid-column: 1 / -1; min-height: 70px; }
   .about-inner { padding: 18px 16px 14px; }
+}
+
+/* Touch-Geräte (Handy, Tablet): größere Ziele für Finger */
+@media (pointer: coarse) {
+  .chip { padding: 4px 10px 4px 8px; font-size: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

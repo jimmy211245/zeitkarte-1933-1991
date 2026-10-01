@@ -22,8 +22,8 @@ export function setBlocLegend(used) {
 }
 
 export function renderLegend(el) {
-  // auf schmalen Bildschirmen anfangs eingeklappt, danach gilt die gemerkte Wahl
-  let collapsed = window.matchMedia('(max-width: 860px)').matches;
+  // auf Handy, Tablet und niedrigen Bildschirmen anfangs eingeklappt, danach gilt die gemerkte Wahl
+  let collapsed = window.matchMedia('(max-width: 860px), (max-height: 820px), (pointer: coarse)').matches;
   try {
     const saved = localStorage.getItem('legend-collapsed');
     if (saved !== null) collapsed = saved === '1';
