@@ -1,6 +1,14 @@
 // Legende der Kartensignaturen (einklappbar, Zustand wird im Browser gemerkt).
 import { subscribe, state } from '../state.js';
 import { BLOCS } from '../data/blocs.js';
+import { PLAN_COLORS } from '../map/style.js';
+
+// Teilungspläne: Überschrift und Bestandteile (Farben wie auf der Karte)
+const PLANS = {
+  un1947: ['UN-Teilungsplan 1947 (schematisch)', [['jewish', 'Jüdischer Staat'], ['arab', 'Arabischer Staat'], ['intl', 'Jerusalem unter UN-Verwaltung']]],
+  peel1937: ['Peel-Plan 1937 (schematisch)', [['jewish', 'Jüdischer Staat'], ['arab', 'Arabischer Staat (mit Transjordanien)'], ['british', 'Britisches Mandat']]],
+};
+let plan = null;
 
 const hatch = (base, line, dir = 45) =>
   `background: repeating-linear-gradient(${dir}deg, ${line} 0 1.5px, transparent 1.5px 5px), ${base}`;
@@ -21,6 +29,12 @@ export function setBlocLegend(used) {
   redraw();
 }
 
+/** Von der Karte aufgerufen, wenn ein Teilungsplan ein- oder ausgeblendet wird */
+export function setPlanLegend(p) {
+  plan = p;
+  redraw();
+}
+
 export function renderLegend(el) {
   // auf Handy, Tablet und niedrigen Bildschirmen anfangs eingeklappt, danach gilt die gemerkte Wahl
   let collapsed = window.matchMedia('(max-width: 860px), (max-height: 820px), (pointer: coarse)').matches;
@@ -33,14 +47,20 @@ export function renderLegend(el) {
     const first = state.mode === 'blocs'
       ? Object.entries(BLOCS).filter(([k]) => blocsInUse.has(k)).map(([, b]) => [b.name, `background:${b.color}`])
       : STATES;
+    const planItems = plan
+      ? `<li class="lg-head">${PLANS[plan][0]}</li>${PLANS[plan][1].map(([part, label]) => `<li><span class="sw" style="background:${PLAN_COLORS[part]}"></span>${label}</li>`).join('')}`
+      : '';
     el.innerHTML = `
       <h2 tabindex="0" role="button" aria-expanded="${!collapsed}">${state.mode === 'blocs' ? 'Bündnisse' : 'Legende'} <span aria-hidden="true">${collapsed ? '+' : '–'}</span></h2>
       <ul>
+        ${planItems}
         ${first.map(([label, css]) => `<li><span class="sw" style="${css}"></span>${label}</li>`).join('')}
         ${state.mode === 'blocs' ? `<li><span class="sw" style="${hatch('#e4e1da', 'rgba(255,255,255,.9)')}"></span>Abhängiges Gebiet (Farbe der Kolonialmacht)</li>` : ''}
         <li><span class="sw" style="background:rgba(163,38,42,.15);border:1.5px dashed #a3262a"></span>Ausgewählte Gebietsänderung</li>
         ${fronts ? `<li><span class="sw" style="${hatch('transparent', 'rgba(163,38,42,.6)')}"></span>Von den Achsenmächten besetzt (ungefähr)</li><li><span class="sw" style="${hatch('transparent', 'rgba(40,78,140,.6)', -45)}"></span>Von den Alliierten erobertes Achsengebiet</li><li><span class="ln"></span>Frontlinie (ungefähr)</li>` : ''}
+        ${state.layers.admin ? `<li><span class="ln ln-admin"></span>Binnengrenze (Bundesland, Teilrepublik …)</li>` : ''}
         <li><span class="sw" style="background:#3d5a80;border-radius:50%;width:11px;height:11px;margin:0 5.5px"></span>Ereignis (verblasst mit der Zeit)</li>
+        ${state.layers.places ? `<li><span class="sw" style="background:#fff;border:1.5px solid #22272e;border-radius:50%;width:9px;height:9px;margin:0 6.5px"></span>Stadt (Nahost, ab mittlerer Zoomstufe)</li>` : ''}
       </ul>`;
     el.classList.toggle('collapsed', collapsed);
   };

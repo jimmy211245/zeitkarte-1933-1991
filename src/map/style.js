@@ -19,6 +19,11 @@ const WARTIME = ['ann', 'adm', 'occ'];
 
 export const LABEL_HALO = 'rgba(248,248,245,0.82)';
 
+// Schematische Teilungspläne (nur sichtbar, solange das zugehörige Ereignis ausgewählt ist)
+export const PLAN_COLORS = { jewish: '#4a78b5', arab: '#5e9a4b', intl: '#c9b37e', british: '#c9b37e' };
+const NO_PLAN = ['==', ['get', 'plan'], ''];
+export const planFilter = (plan, geometry) => ['all', ['==', ['geometry-type'], geometry], ['==', ['get', 'plan'], plan ?? '']];
+
 function labelLayer(id, filter, minzoom, layout, paint = {}) {
   return {
     id,
@@ -38,6 +43,18 @@ function labelLayer(id, filter, minzoom, layout, paint = {}) {
   };
 }
 
+// Stadtnamen weichen aus (rechts, links, oben, unten vom Punkt), damit Küstenstädte wie Tel Aviv
+// ihren Namen aufs Meer statt über das Hinterland legen können
+function placeLayer(r, minzoom) {
+  return labelLayer(`labels-place-${r}`, ['all', ['==', ['get', 'k'], 'place'], ['==', ['get', 'r'], r]], minzoom, {
+    'text-size': ['interpolate', ['linear'], ['zoom'], minzoom, r === 1 ? 11.5 : 10.5, 9, r === 1 ? 15 : 13],
+    'text-variable-anchor': ['left', 'right', 'top', 'bottom'],
+    'text-radial-offset': 0.55,
+    'text-justify': 'auto',
+    'text-max-width': 10,
+  }, { 'text-color': '#2b2f35', 'text-halo-width': 1.4 });
+}
+
 export function buildStyle(dataUrl, startYmd) {
   return {
     version: 8,
@@ -50,6 +67,8 @@ export function buildStyle(dataUrl, startYmd) {
       states: { type: 'geojson', data: EMPTY, promoteId: 'id' },
       labels: { type: 'geojson', data: EMPTY },
       focus: { type: 'geojson', data: EMPTY },
+      admin: { type: 'geojson', data: EMPTY, promoteId: 'id' },
+      plans: { type: 'geojson', data: EMPTY },
     },
     layers: [
       { id: 'sea', type: 'background', paint: { 'background-color': SEA } },
@@ -98,6 +117,20 @@ export function buildStyle(dataUrl, startYmd) {
           'line-opacity': ['interpolate', ['linear'], ['zoom'], 2.5, 0, 3.5, 0.75],
         },
       },
+      // Binnengrenzen (Bundesstaaten, Provinzen, Teilrepubliken), gestrichelt unter den Staatsgrenzen
+      {
+        id: 'admin-line',
+        type: 'line',
+        source: 'admin',
+        minzoom: 2.5,
+        layout: { 'line-join': 'round' },
+        paint: {
+          'line-color': '#5c534a',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 2.5, 0.35, 5, 0.7, 8, 1.2],
+          'line-dasharray': [3, 2],
+          'line-opacity': ['interpolate', ['linear'], ['zoom'], 2.5, ['case', ON, 0.22, 0], 5, ['case', ON, 0.5, 0]],
+        },
+      },
       {
         id: 'change-fill',
         type: 'fill',
@@ -122,6 +155,52 @@ export function buildStyle(dataUrl, startYmd) {
         layout: { 'line-join': 'round' },
         paint: { 'line-color': '#a3262a', 'line-width': ['interpolate', ['linear'], ['zoom'], 2, 1.2, 7, 2.6], 'line-dasharray': [2, 1.2] },
       },
+      {
+        id: 'plan-fill',
+        type: 'fill',
+        source: 'plans',
+        filter: NO_PLAN,
+        paint: {
+          'fill-color': ['match', ['get', 'part'], 'jewish', PLAN_COLORS.jewish, 'arab', PLAN_COLORS.arab, PLAN_COLORS.intl],
+          'fill-opacity': 0.72,
+        },
+      },
+      {
+        id: 'plan-line',
+        type: 'line',
+        source: 'plans',
+        filter: NO_PLAN,
+        layout: { 'line-join': 'round' },
+        paint: { 'line-color': '#1f2a36', 'line-width': ['interpolate', ['linear'], ['zoom'], 5, 0.8, 8, 1.6], 'line-opacity': 0.8 },
+      },
+      // Beschriftungen: MapLibre platziert von der obersten Ebene abwärts, spätere Ebenen haben
+      // also Vorrang. Provinznamen liegen ganz unten, kleine unter großen.
+      labelLayer('labels-admin-2', ['all', ['==', ['get', 'k'], 'admin'], ['>=', ['get', 'r'], 3]], 5, {
+        'text-font': ['Noto Sans Italic'],
+        'text-size': ['interpolate', ['linear'], ['zoom'], 5, 9, 8, 12],
+        'text-letter-spacing': 0.04,
+      }, { 'text-color': '#6b6157', 'text-halo-width': 1.1 }),
+      labelLayer('labels-admin-1', ['all', ['==', ['get', 'k'], 'admin'], ['<=', ['get', 'r'], 2]], 3.6, {
+        'text-font': ['Noto Sans Italic'],
+        'text-size': ['interpolate', ['linear'], ['zoom'], 3.6, 9, 7, 12],
+        'text-letter-spacing': 0.04,
+      }, { 'text-color': '#6b6157', 'text-halo-width': 1.1 }),
+      {
+        id: 'places-dot',
+        type: 'circle',
+        source: 'labels',
+        minzoom: 5,
+        filter: ['all', LABEL_ACTIVE, ['==', ['get', 'k'], 'place']],
+        paint: {
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 5, ['match', ['get', 'r'], 1, 2.6, 2], 9, ['match', ['get', 'r'], 1, 4.2, 3.2]],
+          'circle-color': '#ffffff',
+          'circle-stroke-color': INK,
+          'circle-stroke-width': 1.2,
+          // Punkte erscheinen zusammen mit ihrer Beschriftung (gleiche Zoomstufen wie labels-place-*)
+          'circle-opacity': ['step', ['zoom'], ['case', ['==', ['get', 'r'], 1], 1, 0], 6, ['case', ['<=', ['get', 'r'], 2], 1, 0], 7, 1],
+          'circle-stroke-opacity': ['step', ['zoom'], ['case', ['==', ['get', 'r'], 1], 1, 0], 6, ['case', ['<=', ['get', 'r'], 2], 1, 0], 7, 1],
+        },
+      },
       // Beschriftungen: große Staaten zuerst, kleine erst bei höherem Zoom
       labelLayer('labels-major', ['all', ['==', ['get', 'k'], 'state'], ['<=', ['get', 'r'], 2]], 1.3, {
         'text-transform': 'uppercase',
@@ -140,10 +219,26 @@ export function buildStyle(dataUrl, startYmd) {
         'text-font': ['Noto Sans Italic'],
         'text-size': ['interpolate', ['linear'], ['zoom'], 2.4, ['match', ['get', 'r'], [1, 2], 10, 8.5], 6, 12.5],
       }, { 'text-color': '#3c434c' }),
+      // Städte (nur Nahost) unter den Namen besetzter oder annektierter Gebiete, große vor kleinen
+      ...[[3, 7], [2, 6], [1, 5]].map(([r, minzoom]) => placeLayer(r, minzoom)),
       labelLayer('labels-region', ['==', ['get', 'k'], 'region'], 3.2, {
         'text-font': ['Noto Sans Italic'],
         'text-size': ['interpolate', ['linear'], ['zoom'], 3.2, 9, 7, 13],
       }, { 'text-color': '#2f3540' }),
+      {
+        id: 'plan-label',
+        type: 'symbol',
+        source: 'plans',
+        filter: NO_PLAN,
+        layout: {
+          'text-field': ['get', 'name'],
+          'text-font': ['Noto Sans Medium'],
+          'text-size': ['interpolate', ['linear'], ['zoom'], 5, 11, 8, 15],
+          'text-max-width': 8,
+          'text-allow-overlap': true,
+        },
+        paint: { 'text-color': '#14202c', 'text-halo-color': 'rgba(255,255,255,0.88)', 'text-halo-width': 1.6 },
+      },
     ],
   };
 }

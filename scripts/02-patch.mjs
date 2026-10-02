@@ -10,6 +10,7 @@ import { basicFixes } from './data/patches/basic.mjs';
 import { interwarPatches } from './data/patches/interwar.mjs';
 import { ww2Patches } from './data/patches/ww2.mjs';
 import { postwarPatches } from './data/patches/postwar.mjs';
+import { nahostPatches } from './data/patches/nahost.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const BUILD = path.join(ROOT, 'build');
@@ -58,6 +59,8 @@ console.log('Zweiter Weltkrieg …');
 ww2Patches(st, ctx);
 console.log('Nachkriegszeit …');
 postwarPatches(st, ctx);
+console.log('Nahostkonflikt …');
+nahostPatches(st);
 
 // Plausibilitätsprüfung: Überlappungen zwischen gleichzeitig gültigen Flächen
 const CHECK = process.argv.includes('--check');

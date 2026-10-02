@@ -198,6 +198,9 @@ for (const f of finals) {
   const kind = f.st === 'ind' || f.st === 'unrec' ? 'state' : f.st === 'pup' ? 'state' : ['ann', 'adm', 'occ'].includes(f.st) ? 'region' : 'dep';
   f.area = Math.round(total);
   f.lp = pt;
+  // sehr kleine besetzte oder annektierte Gebiete (Ost-Jerusalem) nicht beschriften: der Name stünde
+  // auf der Stadt selbst; er erscheint im Popup und in der Liste der Gebietsänderungen
+  if (kind === 'region' && total < 150) continue;
   labels.push({
     type: 'Feature',
     properties: { s: f.s, e: f.e, t: f.label, r, k: kind },
@@ -242,7 +245,8 @@ for (const s of finals) {
     }
     const inter = intersect(turf.feature(e.geom), turf.feature(s.geom));
     const a = areaKm2(inter);
-    if (a < 250) continue;
+    // kleine Flächen sind meist Verschneidungssplitter – außer sie sind redaktionell beschrieben
+    if (!inter || (a < 250 && !CHANGE_NOTES[`${toIso(s.s)}|${e.key}|${s.key}`])) continue;
     let type = 'gebiet';
     const isNew = firstStart.get(s.key) === s.s;
     if (s.st === 'ann') type = 'annexion';

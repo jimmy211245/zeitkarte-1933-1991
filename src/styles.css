@@ -104,6 +104,26 @@ svg { width: 18px; height: 18px; flex: none; }
   box-shadow: var(--shadow);
 }
 .icon-btn:hover { background: #fff; }
+
+/* Schwerpunkt-Schalter: eingeschaltet in Signalrot */
+.theme-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 5px 10px;
+  font-size: 13px;
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+}
+.theme-btn svg { width: 16px; height: 16px; color: var(--signal); }
+.theme-btn .short { display: none; }
+.theme-btn:hover { background: #fff; }
+.theme-btn[aria-pressed='true'] { background: var(--signal); border-color: var(--signal); color: #fff; }
+.theme-btn[aria-pressed='true'] svg { color: #fff; }
 .menu-wrap { position: relative; }
 .menu {
   position: absolute;
@@ -154,6 +174,23 @@ svg { width: 18px; height: 18px; flex: none; }
 .tabs button[aria-selected='true'] { color: var(--ink); border-bottom-color: var(--ink); }
 .count { color: var(--ink-3); font-weight: 400; margin-left: 2px; }
 
+.theme-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 10px 12px 0;
+  padding: 5px 5px 5px 10px;
+  background: #f6e9e8;
+  border: 1px solid #e3c2c0;
+  border-radius: var(--radius);
+  font-size: 12.5px;
+  color: #5a2224;
+}
+.theme-banner b { font-weight: 600; }
+.theme-banner button { display: inline-flex; border: 0; background: transparent; padding: 3px; border-radius: 4px; color: inherit; }
+.theme-banner button:hover { background: rgba(163, 38, 42, 0.12); }
+.theme-banner svg { width: 15px; height: 15px; }
 .search { position: relative; margin: 10px 12px 6px; }
 .search svg { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--ink-3); width: 16px; height: 16px; }
 .search input {
@@ -229,6 +266,8 @@ svg { width: 18px; height: 18px; flex: none; }
 .detail-kicker { font-size: 12px; color: var(--ink-2); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .detail-kicker .cat { display: inline-flex; align-items: center; gap: 5px; }
 .detail-kicker .cat i { width: 8px; height: 8px; border-radius: 50%; }
+.theme-tag { display: inline-flex; padding: 1px 8px; border-radius: 999px; background: #f6e9e8; color: #7a2a2d; font-size: 11px; font-weight: 500; }
+.detail-note { margin: 10px 0 0; max-width: 60ch; font-size: 12.5px; font-style: italic; color: var(--ink-2); }
 .detail-date { font-family: var(--font-serif); font-size: 15px; color: var(--ink-2); margin: 10px 0 2px; }
 .detail-title { font-family: var(--font-serif); font-variation-settings: 'wdth' 87.5; font-weight: 700; font-size: 23px; line-height: 1.2; margin: 0 0 6px; letter-spacing: -0.01em; }
 .detail-place { font-size: 13px; color: var(--ink-2); display: flex; gap: 4px; align-items: center; margin-bottom: 12px; }
@@ -270,6 +309,8 @@ svg { width: 18px; height: 18px; flex: none; }
 .legend li { display: flex; gap: 8px; align-items: center; }
 .legend .sw { width: 22px; height: 13px; border-radius: 2px; border: 1px solid rgba(37, 42, 49, 0.35); flex: none; }
 .legend .ln { width: 22px; height: 0; border-top: 2.5px solid var(--signal); flex: none; }
+.legend .ln.ln-admin { border-top: 1.5px dashed #5c534a; }
+.legend .lg-head { font-weight: 600; color: var(--ink-2); }
 .legend.collapsed ul { display: none; }
 .legend.collapsed h2 { margin: 0; }
 
@@ -364,8 +405,20 @@ svg { width: 18px; height: 18px; flex: none; }
 .maplibregl-ctrl-bottom-left { left: calc(var(--panel-w) + 12px); }
 
 /* mittlere Breiten: Knöpfe der Kopfzeile ohne Beschriftung, damit alles in eine Zeile passt */
+/* mittlere Breiten: Kopfzeile zweizeilig (oben Titel und Knöpfe, darunter Ansicht und Schwerpunkt),
+   Knöpfe ohne Beschriftung – sonst stößt sie an die Zoomknöpfe */
 @media (max-width: 1080px) {
+  .masthead { display: grid; grid-template-columns: 1fr auto auto; justify-items: start; gap: 6px; }
+  .brand { margin: 0; }
+  .menu-wrap { grid-area: 1 / 2; }
+  #about-btn { grid-area: 1 / 3; }
+  .seg { grid-area: 2 / 1; }
+  .theme-btn { grid-area: 2 / 2 / 3 / 4; justify-self: end; }
+  .menu { left: auto; right: 0; }
   .icon-btn span { display: none; }
+  .theme-btn .long { display: none; }
+  .theme-btn .short { display: inline; }
+  .legend { top: 96px; }
 }
 
 /* --- Dialog "Über" ------------------------------------------------------------------------- */
@@ -394,22 +447,12 @@ dialog#about::backdrop { background: rgba(30, 35, 40, 0.35); }
   :root { --panel-w: 100%; --dock-h: 128px; --peek-h: 50px; }
   #stage { overflow: hidden; }
 
-  /* Kopfzeile: oben Titel und Knöpfe, darunter die Ansicht */
-  .masthead {
-    top: 8px;
-    left: 10px;
-    right: 8px;
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    justify-items: start;
-    gap: 6px;
-  }
-  .brand { font-size: 16px; margin: 0; }
-  .menu-wrap { grid-area: 1 / 2; }
-  #about-btn { grid-area: 1 / 3; }
-  .seg { grid-area: 2 / 1 / 3 / 4; }
+  /* Kopfzeile zweizeilig wie bei mittleren Breiten, aber über die ganze Breite */
+  .masthead { top: 8px; left: 10px; right: 8px; }
+  .brand { font-size: 16px; }
+  .theme-btn { padding: 6px 9px; }
   .icon-btn { padding: 6px 8px; }
-  .menu { left: auto; right: 0; max-width: calc(100vw - 16px); }
+  .menu { max-width: calc(100vw - 16px); }
 
   /* Legende unten links über dem Blatt; aufgeklappt wächst sie nach oben, der Kopf bleibt stehen */
   .legend { top: auto; left: 8px; right: auto; bottom: calc(var(--peek-h) + 8px); max-height: calc(100% - var(--peek-h) - 100px); padding: 7px 11px; display: flex; flex-direction: column-reverse; }

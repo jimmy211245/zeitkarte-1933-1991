@@ -80,6 +80,16 @@ fs.writeFileSync(path.join(OUT, 'lakes.json'), JSON.stringify({ type: 'FeatureCo
 // Flüsse
 ms(path.join(RAW, 'ne_50m_rivers_lake_centerlines.geojson'), '-simplify', '40%', '-filter-fields', 'scalerank,name', '-o', path.join(OUT, 'rivers.json'), 'precision=0.0001');
 
+// Verwaltungseinheiten (heutiger Stand) für die datierbaren Binnengrenzen (08-admin.mjs) und
+// für die feinere Grüne Linie zwischen Israel, Westjordanland und Gaza (data/patches/nahost.mjs)
+const ADMIN_COUNTRIES = ['USA', 'CAN', 'MEX', 'BRA', 'AUS', 'DEU', 'AUT', 'CHE', 'UKR', 'UZB', 'RUS', 'PSX', 'SYR'];
+ms(
+  path.join(RAW, 'ne_10m_admin_1_states_provinces.geojson'),
+  '-filter', `${JSON.stringify(ADMIN_COUNTRIES)}.indexOf(adm0_a3) > -1`,
+  '-filter-fields', 'adm0_a3,name,name_de,iso_3166_2,postal',
+  '-o', path.join(TMP, 'ne-admin1.json'), 'precision=0.0001',
+);
+
 for (const f of ['antarctica.json', 'lakes.json', 'rivers.json']) {
   console.log(f, Math.round(fs.statSync(path.join(OUT, f)).size / 1024), 'KB');
 }

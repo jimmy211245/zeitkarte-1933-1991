@@ -1,5 +1,5 @@
 // Nachkriegs- und Kalter-Krieg-Details, die CShapes nicht als eigene Flächen führt.
-import { polyLL, boxPoly, union } from '../../lib/geo.mjs';
+import { polyLL, boxPoly } from '../../lib/geo.mjs';
 import { SAAR } from './interwar.mjs';
 
 // Berlin: Umriss von Groß-Berlin und von West-Berlin (Sektorengrenze), vereinfacht
@@ -46,11 +46,7 @@ export function postwarPatches(st, ctx) {
   st.carve(740, boxPoly([122.5, 24.0, 131.5, 27.95]), '1945-09-02', '1972-05-14', { gw: 'RYUKYU' });
   st.carve(740, boxPoly([128.8, 27.95, 130.2, 28.6]), '1946-02-02', '1953-12-24', { gw: 'RYUKYU' });
 
-  // Von Israel 1967 besetzte Gebiete: Sinai bis zur Rückgabe (vertraglich 1979), Westjordanland, Gaza, Golan
-  const egyptBefore = st.one(651, '1960-01-01');
-  st.carve(666, egyptBefore, '1967-06-10', '1979-05-25', { gw: 'ISR-OCC' });
-  const occupied = union([st.one(6631, '1960-01-01'), st.one(6511, '1960-01-01'), st.one(652, '1960-01-01')]);
-  st.carve(666, occupied, '1967-06-10', '2019-12-31', { gw: 'ISR-OCC' });
+  // Nahostkonflikt: siehe nahost.mjs
 
   // Westsahara: 1975/76 zwischen Marokko und Mauretanien aufgeteilt, 1979 ganz von Marokko besetzt
   const westernSahara = st.one(609, '1970-01-01');

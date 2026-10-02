@@ -1,7 +1,7 @@
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './styles.css';
-import { buildStyle } from './map/style.js';
+import { buildStyle, planFilter } from './map/style.js';
 import { addPatterns } from './map/patterns.js';
 import { addEventLayers, addHoverLayer, addFrontLayers } from './map/layers.js';
 import { setupInteractions, focusOn } from './map/interactions.js';
@@ -9,8 +9,8 @@ import { state, set, subscribe } from './state.js';
 import { START, END, toYmd, toIso, fromIso, formatDayMonth, yearOf, addMonths } from './lib/dates.js';
 import { createTimeline } from './ui/timeline.js';
 import { topoToGeoJSON } from './lib/topojson.js';
-import { createPanel } from './ui/panel.js';
-import { renderLegend, setBlocLegend } from './ui/legend.js';
+import { createPanel, THEME_REGIONS } from './ui/panel.js';
+import { renderLegend, setBlocLegend, setPlanLegend } from './ui/legend.js';
 import { createTimeEngine } from './map/timeengine.js';
 import { setupAbout } from './ui/about.js';
 
@@ -20,6 +20,10 @@ const DATA = new URL(`${import.meta.env.BASE_URL}data`, window.location.href).hr
 const hash = location.hash.slice(1).split('/');
 if (/^\d{4}-\d{2}-\d{2}$/.test(hash[0] ?? '')) state.day = Math.max(START, Math.min(END, fromIso(hash[0])));
 const initialView = hash.length >= 4 ? { zoom: +hash[1], center: [+hash[2], +hash[3]] } : { zoom: 3.6, center: [15, 50] };
+// Schwerpunktthema per Link (?thema=nahost)
+if (new URLSearchParams(location.search).get('thema') in THEME_REGIONS) state.theme = new URLSearchParams(location.search).get('thema');
+// Kartenausschnitt beim Einschalten eines Schwerpunkts [[West, Süd], [Ost, Nord]]
+const THEME_VIEW = { nahost: [[31.6, 29.4], [37.2, 34.0]] };
 
 const map = new maplibregl.Map({
   container: 'map',
@@ -38,7 +42,7 @@ map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-left');
 map.addControl(
   new maplibregl.AttributionControl({
     compact: true,
-    customAttribution: 'Grenzen: <a href="https://icr.ethz.ch/data/cshapes/" target="_blank" rel="noopener">CShapes 2.0</a> (ETH Zürich, CC BY-NC-SA 4.0), ergänzt · Küsten, Flüsse: Natural Earth',
+    customAttribution: 'Grenzen: <a href="https://icr.ethz.ch/data/cshapes/" target="_blank" rel="noopener">CShapes 2.0</a> (ETH Zürich, CC BY-NC-SA 4.0), ergänzt · Küsten, Flüsse, Binnengrenzen: Natural Earth',
   }),
 );
 // Auf schmalen Bildschirmen startet die Quellenangabe eingeklappt (Knopf „i“), sonst verdeckt sie
@@ -76,8 +80,16 @@ const frontsPromise = getJson('fronts.topo.json').then((t) => {
   fc.features.forEach((f, i) => (f.properties.id = i + 1));
   return fc;
 });
-const labelsPromise = getJson('labels.json');
+// Staatsnamen, Provinz- und Teilrepubliknamen und Städte teilen sich eine nach Datum gefilterte Quelle
+const labelsPromise = Promise.all([getJson('labels.json'), getJson('admin-labels.json'), getJson('places.json')]).then(([states, admin, places]) => {
+  for (const f of admin.features) states.features.push({ ...f, properties: { ...f.properties, k: 'admin' } });
+  for (const f of places.features) states.features.push({ ...f, properties: { s: f.properties.s, e: f.properties.e, t: f.properties.n, r: f.properties.r, k: 'place' } });
+  return states;
+});
+const adminPromise = getJson('admin.topo.json').then((t) => topoToGeoJSON(t));
+const plansPromise = getJson('plans.json');
 const [events, changes] = await Promise.all([getJson('events.json'), getJson('changes-list.json')]);
+const eventsById = new Map(events.map((e) => [e.id, e]));
 
 // --- Seitenleiste und Zeitband ----------------------------------------------------------------
 const panel = createPanel({
@@ -85,9 +97,12 @@ const panel = createPanel({
   changes,
   onFocus(kind, it, { forceFly = false } = {}) {
     if (!ready) return;
-    focusOn(map, kind, it, { force: forceFly, inset: mapInset() });
+    // Ereignisse mit Teilungsplan: auf den Plan statt auf den Ort des Beschlusses ausrichten
+    if (kind === 'event' && it.plan && planBounds[it.plan]) focusOn(map, 'change', { bbox: planBounds[it.plan] }, { inset: mapInset() });
+    else focusOn(map, kind, it, { force: forceFly, inset: mapInset() });
   },
 });
+const planBounds = {};
 
 // Ränder der Karte, die Kopfzeile und Liste verdecken (für das Ausrichten auf ein Ziel)
 function mapInset() {
@@ -107,18 +122,34 @@ const timeline = createTimeline({
     panel.open(h.kind, h.id);
   },
 });
-timeline.setMarkers(
-  events.map((e) => ({ id: e.id, t: e.t, cat: e.cat, imp: e.imp, title: e.title })),
-  changes.map((c) => ({ id: c.id, t: c.t, imp: c.imp, title: c.title })),
-);
+// Zeitband: Marken außerhalb des Schwerpunktthemas abgeschwächt
+function setTimelineMarkers() {
+  const region = state.theme ? THEME_REGIONS[state.theme] : null;
+  const inRegion = (b) => !region || !(b[2] < region[0] || b[0] > region[2] || b[3] < region[1] || b[1] > region[3]);
+  timeline.setMarkers(
+    events.map((e) => ({ id: e.id, t: e.t, cat: e.cat, imp: e.imp, title: e.title, dim: !!state.theme && e.theme !== state.theme })),
+    changes.map((c) => ({ id: c.id, t: c.t, imp: c.imp, title: c.title, dim: !inRegion(c.bbox) })),
+  );
+}
+setTimelineMarkers();
 
 // --- Karte ------------------------------------------------------------------------------------
 let engine = null;
 map.on('load', async () => {
   addPatterns(map);
-  const [statesData, labelsData, frontsData, changeShapes] = await Promise.all([statesPromise, labelsPromise, frontsPromise, changeShapesPromise]);
+  const [statesData, labelsData, frontsData, changeShapes, adminData, plansData] = await Promise.all([
+    statesPromise, labelsPromise, frontsPromise, changeShapesPromise, adminPromise, plansPromise,
+  ]);
   map.getSource('states').setData(statesData);
   map.getSource('labels').setData(labelsData);
+  map.getSource('admin').setData(adminData);
+  map.getSource('plans').setData(plansData);
+  for (const f of plansData.features) {
+    if (f.geometry.type === 'Point') continue;
+    const b = (planBounds[f.properties.plan] ??= [180, 90, -180, -90]);
+    const walk = (c) => (typeof c[0] === 'number' ? (b[0] = Math.min(b[0], c[0]), b[1] = Math.min(b[1], c[1]), b[2] = Math.max(b[2], c[0]), b[3] = Math.max(b[3], c[1])) : c.forEach(walk));
+    walk(f.geometry.coordinates);
+  }
   addFrontLayers(map, frontsData);
   addHoverLayer(map);
   addEventLayers(map, {
@@ -127,28 +158,43 @@ map.on('load', async () => {
       .filter((e) => e.lon != null)
       .map((e) => ({ type: 'Feature', properties: { id: e.id, imp: e.imp, cat: e.cat, title: e.title }, geometry: { type: 'Point', coordinates: [e.lon, e.lat] } })),
   });
-  engine = createTimeEngine(map, { states: statesData, labels: labelsData, fronts: frontsData, events, changeShapes, onBlocs: setBlocLegend });
+  engine = createTimeEngine(map, { states: statesData, labels: labelsData, fronts: frontsData, admin: adminData, events, changeShapes, onBlocs: setBlocLegend });
   setupInteractions(map, {
     onEvent: (id) => { set({ tab: 'events' }); panel.open('event', id, { jump: false }); },
     isStateActive: engine.isStateActive,
     isEventVisible: engine.isEventVisible,
   });
   ready = true;
-  syncMap(state, ['day', 'selection', 'layers', 'mode']);
+  syncMap(state, ['day', 'selection', 'layers', 'mode', 'theme']);
   map.once('idle', () => (document.getElementById('loading').hidden = true));
 });
 
+let shownPlan = null;
 function syncMap(s, changed) {
   if (!ready) return;
   if (changed.includes('day')) engine.update(s.day);
   if (changed.includes('mode')) engine.setMode(s.mode, s.day);
-  if (changed.includes('selection')) engine.setSelection(s.selection, s.day);
+  if (changed.includes('theme')) engine.setTheme(s.theme, s.day);
+  if (changed.includes('selection')) {
+    engine.setSelection(s.selection, s.day);
+    // Teilungsplan einblenden, solange sein Ereignis ausgewählt ist
+    const plan = s.selection?.kind === 'event' ? eventsById.get(s.selection.id)?.plan ?? null : null;
+    if (plan !== shownPlan) {
+      shownPlan = plan;
+      map.setFilter('plan-fill', planFilter(plan, 'Polygon'));
+      map.setFilter('plan-line', planFilter(plan, 'Polygon'));
+      map.setFilter('plan-label', planFilter(plan, 'Point'));
+      setPlanLegend(plan);
+    }
+  }
   if (changed.includes('layers')) {
     const vis = (on) => (on ? 'visible' : 'none');
     for (const id of ['events-halo', 'events-dot', 'events-label']) map.getLayer(id) && map.setLayoutProperty(id, 'visibility', vis(s.layers.events));
     for (const id of ['rivers', 'lakes']) map.setLayoutProperty(id, 'visibility', vis(s.layers.rivers));
     for (const id of ['change-fill', 'change-line']) map.setLayoutProperty(id, 'visibility', vis(s.layers.changes));
     for (const id of ['fronts-fill', 'fronts-allied', 'fronts-casing', 'fronts-line']) map.getLayer(id) && map.setLayoutProperty(id, 'visibility', vis(s.layers.fronts));
+    for (const id of ['admin-line', 'labels-admin-1', 'labels-admin-2']) map.setLayoutProperty(id, 'visibility', vis(s.layers.admin));
+    for (const id of ['places-dot', 'labels-place-1', 'labels-place-2', 'labels-place-3']) map.setLayoutProperty(id, 'visibility', vis(s.layers.places));
   }
 }
 
@@ -180,7 +226,8 @@ playBtn.addEventListener('click', () => set({ playing: !state.playing }));
 document.getElementById('speed').addEventListener('change', (e) => set({ speed: Number(e.target.value) }));
 
 function jumpEvent(dir) {
-  const list = events;
+  // mit Schwerpunkt nur zwischen dessen Ereignissen springen
+  const list = state.theme ? events.filter((e) => e.theme === state.theme) : events;
   let target = null;
   if (dir > 0) target = list.find((e) => e.t > state.day);
   else for (let i = list.length - 1; i >= 0; i--) if (list[i].t < state.day) { target = list[i]; break; }
@@ -225,8 +272,30 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-// --- Kopfzeile: Ansicht und Ebenen ------------------------------------------------------------
+// --- Kopfzeile: Ansicht, Schwerpunkt und Ebenen -----------------------------------------------
 document.querySelectorAll('.seg [data-mode]').forEach((b) => b.addEventListener('click', () => set({ mode: b.dataset.mode })));
+const themeBtn = document.getElementById('theme-btn');
+themeBtn.addEventListener('click', () => {
+  const theme = state.theme ? null : 'nahost';
+  set({ theme, selection: null });
+  // beim Einschalten in die Region zoomen, sofern sie nicht schon im Blick ist
+  if (theme && ready) {
+    const [[w, s], [e, n]] = THEME_VIEW[theme];
+    const c = map.getCenter();
+    const inView = map.getZoom() >= 5 && c.lng > w && c.lng < e && c.lat > s && c.lat < n;
+    const inset = mapInset();
+    if (!inView) map.fitBounds(THEME_VIEW[theme], { padding: { top: inset.top, bottom: inset.bottom, left: inset.left, right: 40 }, duration: 1400, essential: true });
+  }
+});
+function renderThemeButton() {
+  themeBtn.setAttribute('aria-pressed', String(!!state.theme));
+  // Thema in der Adresse festhalten (?thema=nahost), Datum und Ausschnitt bleiben im Fragment
+  const url = new URL(location.href);
+  if (state.theme) url.searchParams.set('thema', state.theme);
+  else url.searchParams.delete('thema');
+  history.replaceState(null, '', url);
+}
+renderThemeButton();
 const layersBtn = document.getElementById('layers-btn');
 const layersMenu = document.getElementById('layers-menu');
 layersBtn.addEventListener('click', () => {
@@ -278,6 +347,10 @@ subscribe((s, changed) => {
   }
   if (changed.includes('mode')) {
     document.querySelectorAll('.seg [data-mode]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.mode === s.mode)));
+  }
+  if (changed.includes('theme')) {
+    renderThemeButton();
+    setTimelineMarkers();
   }
 });
 

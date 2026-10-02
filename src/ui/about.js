@@ -12,12 +12,15 @@ export function setupAbout(dialog, button, { events, changes }) {
         <li>Pfeiltasten: einen Monat vor oder zurück (mit Umschalt ein Jahr, mit Alt einen Tag). Leertaste: abspielen. Bild↑/Bild↓: vorheriges oder nächstes Ereignis.</li>
         <li>Klick auf ein Land zeigt Name, Status und Gültigkeit der Grenzen; Klick auf einen Punkt öffnet das Ereignis.</li>
         <li>Die Adresszeile merkt sich Datum und Ausschnitt – so lassen sich Ansichten als Link teilen.</li>
+        <li>Der Schalter „Nahostkonflikt“ beschränkt Liste, Karte und Zeitband auf diesen Schwerpunkt und zeigt die Region; als Link: <code>?thema=nahost</code>. Beim Peel-Plan und beim UN-Teilungsplan erscheint der jeweilige Plan auf der Karte.</li>
       </ul>
 
       <h3>Quellen und Methode</h3>
       <ul>
         <li><b>Grenzen:</b> CShapes 2.0 (Schvitz, Girardin, Rüegger, Weidmann, Cederman, Gleditsch; ETH Zürich), Lizenz CC BY-NC-SA 4.0. CShapes bildet völkerrechtliche Grenzen ab und lässt Änderungen unter 10 000 km² sowie im Krieg erzwungene und danach rückgängig gemachte Änderungen weg.</li>
         <li><b>Ergänzungen:</b> Annexionen und Besatzungsverwaltungen 1938–1945 (z. B. Anschluss Österreichs, Teilung Polens, Zerschlagung Jugoslawiens), Mandschukuo, Istrien, Saargebiet, Hatay, Berlin, Triest, Okinawa und fehlende Inseln wurden für diese Karte nachgezeichnet. Die Trennlinien sind vereinfacht und können um einige Kilometer abweichen.</li>
+        <li><b>Nahostkonflikt:</b> Die besetzten Gebiete sind einzeln und mit ihren Veränderungen erfasst (Suezkrise 1956/57, Sechstagekrieg, Jom-Kippur-Krieg, schrittweise Rückgabe des Sinai 1974–1982, Annexionen von Ost-Jerusalem und Golan, Südlibanon 1978–1985). Ost-Jerusalem und die UN-Pufferzone auf dem Golan folgen Natural Earth, die übrigen Linien sind vereinfacht nachgezeichnet. Die Teilungspläne von 1937 und 1947 sind schematisch nach Karten der britischen Regierung (1938) und der CIA (1973) gezeichnet, beide gemeinfrei.</li>
+        <li><b>Binnengrenzen:</b> Nur für Länder, deren Gliederung sich für die jeweilige Zeit belegen lässt: Bundesstaaten der USA, Provinzen Kanadas, Bundesstaaten Mexikos, Brasiliens und Australiens, Länder der Bundesrepublik, der DDR (bis 1952), Österreichs und Kantone der Schweiz nach Natural Earth (heutiger Zuschnitt, für frühere Zeiträume zusammengelegt) sowie die Teilrepubliken der Sowjetunion, Jugoslawiens und der Tschechoslowakei nach den Grenzen ihrer Nachfolgestaaten (CShapes).</li>
         <li><b>Basiskarte:</b> Natural Earth (gemeinfrei). Moderne Stauseen erscheinen erst ab ihrer Entstehung, der Aralsee in seiner damaligen Größe.</li>
         <li><b>Ereignisse:</b> redaktionell zusammengestellt; Links führen zur deutschsprachigen Wikipedia.</li>
       </ul>

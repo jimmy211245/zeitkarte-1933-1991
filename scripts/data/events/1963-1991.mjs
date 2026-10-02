@@ -47,7 +47,7 @@ export default [
     text: `Bei einer Demonstration gegen den Besuch des Schahs von Persien erschießt ein Polizist den Studenten Benno Ohnesorg. Die Studentenbewegung in der Bundesrepublik radikalisiert sich.`,
   },
   {
-    d: '1967-06-05', end: '1967-06-10', title: 'Sechstagekrieg', cat: 'krieg', imp: 1, place: 'Jerusalem', at: [35.23, 31.78], wiki: 'Sechstagekrieg',
+    d: '1967-06-05', end: '1967-06-10', title: 'Sechstagekrieg', cat: 'krieg', imp: 1, place: 'Jerusalem', at: [35.23, 31.78], wiki: 'Sechstagekrieg', theme: 'nahost',
     text: `Israel kommt einem befürchteten Angriff zuvor und besiegt Ägypten, Jordanien und Syrien. Es besetzt den Sinai, den Gazastreifen, das Westjordanland mit Ost-Jerusalem und die Golanhöhen. Die besetzten Gebiete prägen den Nahostkonflikt bis heute.`,
   },
   {
@@ -124,7 +124,7 @@ export default [
     text: `Nixon und Breschnew begrenzen erstmals die Zahl strategischer Raketen und Raketenabwehrsysteme. Die Entspannungspolitik erreicht ihren Höhepunkt.`,
   },
   {
-    d: '1972-09-05', title: 'Olympia-Attentat in München', cat: 'politik', imp: 2, place: 'München, Olympisches Dorf', at: [11.552, 48.1785], wiki: 'Olympia-Attentat München',
+    d: '1972-09-05', title: 'Olympia-Attentat in München', cat: 'krieg', imp: 2, place: 'München, Olympisches Dorf', at: [11.552, 48.1785], wiki: 'Olympia-Attentat München', theme: 'nahost',
     text: `Palästinensische Terroristen der Gruppe „Schwarzer September“ nehmen israelische Sportler als Geiseln. Zwei werden im Olympischen Dorf ermordet, neun weitere sterben beim gescheiterten Befreiungsversuch in Fürstenfeldbruck.`,
   },
   {
@@ -140,7 +140,7 @@ export default [
     text: `Das Militär unter General Augusto Pinochet stürzt den gewählten sozialistischen Präsidenten Salvador Allende, der beim Sturm auf den Präsidentenpalast stirbt. Die USA hatten die Destabilisierung der Regierung unterstützt. Es folgt eine Diktatur bis 1990.`,
   },
   {
-    d: '1973-10-06', end: '1973-10-25', title: 'Jom-Kippur-Krieg und Ölkrise', cat: 'krieg', imp: 1, place: 'Suezkanal und Golanhöhen', at: [32.55, 30.3], wiki: 'Jom-Kippur-Krieg',
+    d: '1973-10-06', end: '1973-10-25', title: 'Jom-Kippur-Krieg und Ölkrise', cat: 'krieg', imp: 1, place: 'Suezkanal und Golanhöhen', at: [32.55, 30.3], wiki: 'Jom-Kippur-Krieg', theme: 'nahost',
     text: `Ägypten und Syrien greifen Israel am höchsten jüdischen Feiertag an. Israel wendet nach anfänglichen Rückschlägen das Blatt. Die arabischen Ölstaaten drosseln die Förderung; in der Bundesrepublik gibt es autofreie Sonntage.`,
   },
   {
@@ -185,7 +185,7 @@ export default [
     text: `Nach der Entführung von Arbeitgeberpräsident Hanns Martin Schleyer durch die RAF und der Entführung der Lufthansa-Maschine „Landshut“ befreit die GSG 9 in Mogadischu die Geiseln. Die inhaftierten RAF-Führer begehen in Stammheim Selbstmord, Schleyer wird ermordet.`,
   },
   {
-    d: '1978-09-17', title: 'Abkommen von Camp David', cat: 'vertrag', imp: 2, place: 'Camp David', at: [-77.4647, 39.6481], wiki: 'Camp-David-Abkommen',
+    d: '1978-09-17', title: 'Abkommen von Camp David', cat: 'vertrag', imp: 2, place: 'Camp David', at: [-77.4647, 39.6481], wiki: 'Camp-David-Abkommen', theme: 'nahost',
     text: `Unter Vermittlung von US-Präsident Jimmy Carter einigen sich Anwar as-Sadat und Menachem Begin auf einen Rahmen für den Frieden. 1979 folgt der Friedensvertrag; Israel gibt den Sinai bis 1982 zurück.`,
   },
   {
@@ -258,7 +258,7 @@ export default [
     text: `Reagan und Gorbatschow vereinbaren die Vernichtung aller landgestützten Mittelstreckenraketen. Erstmals wird eine ganze Waffengattung abgeschafft.`,
   },
   {
-    d: '1987-12-09', title: 'Beginn der Ersten Intifada', cat: 'aufstand', imp: 2, place: 'Gazastreifen', at: [34.48, 31.53], wiki: 'Erste Intifada',
+    d: '1987-12-09', title: 'Beginn der Ersten Intifada', cat: 'aufstand', imp: 2, place: 'Gazastreifen', at: [34.48, 31.53], wiki: 'Erste Intifada', theme: 'nahost',
     text: `Im Gazastreifen und im Westjordanland beginnt ein Aufstand der palästinensischen Bevölkerung gegen die israelische Besatzung, der bis 1993 andauert.`,
   },
   // 1989

@@ -8,7 +8,8 @@ export const state = {
   playing: false,
   speed: 91, // Tage pro Sekunde
   mode: 'states', // 'states' | 'blocs'
-  layers: { events: true, fronts: true, rivers: true, changes: true },
+  theme: null, // Schwerpunktthema: null | 'nahost'
+  layers: { events: true, fronts: true, rivers: true, changes: true, admin: true, places: true },
   selection: null, // { kind: 'event' | 'change', id }
   tab: 'events',
   query: '',

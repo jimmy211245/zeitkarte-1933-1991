@@ -57,9 +57,10 @@ class ActiveSet {
   }
 }
 
-export function createTimeEngine(map, { states, labels, fronts, events, changeShapes, onBlocs }) {
+export function createTimeEngine(map, { states, labels, fronts, admin, events, changeShapes, onBlocs }) {
   const stateSet = new ActiveSet(map, 'states', states.features);
   const frontSet = fronts ? new ActiveSet(map, 'fronts', fronts.features) : null;
+  const adminSet = admin ? new ActiveSet(map, 'admin', admin.features) : null;
   const stateById = new Map(states.features.map((f) => [f.properties.id, f.properties]));
 
   // Beschriftungen: kleine Punktquelle, bleibt filterbasiert, wird aber nur beim Wechsel des
@@ -101,21 +102,24 @@ export function createTimeEngine(map, { states, labels, fronts, events, changeSh
     }
   }
 
-  // Ereignisse: Sichtbarkeit und Ausblenden über Feature-State, Beschriftungen in kleiner Quelle
+  // Ereignisse: Sichtbarkeit und Ausblenden über Feature-State, Beschriftungen in kleiner Quelle.
+  // Mit Schwerpunktthema bleiben nur dessen Ereignisse sichtbar, und auch kleinere werden beschriftet.
   const WINDOW = { 1: 540, 2: 270, 3: 120 };
   const eventItems = events.map((e) => ({ id: e.id, t: e.t, te: e.te, imp: e.imp, ev: e }));
   const eventFade = new Map();
   let selectedEvent = -1;
   let labelIds = '';
+  let theme = null;
 
   function updateEvents(day) {
     const labelled = [];
     for (const it of eventItems) {
       const age = day - it.te;
       const sel = it.id === selectedEvent;
+      const offTheme = theme && it.ev.theme !== theme;
       let f = 0;
       if (sel) f = 1;
-      else if (it.t <= day && age <= WINDOW[it.imp]) f = age <= 0 ? 1 : Math.max(0.12, 1 - (0.88 * age) / WINDOW[it.imp]);
+      else if (!offTheme && it.t <= day && age <= WINDOW[it.imp]) f = age <= 0 ? 1 : Math.max(0.12, 1 - (0.88 * age) / WINDOW[it.imp]);
       f = Math.round(f * 50) / 50;
       const h = f > 0 && (sel || age <= 21) ? 1 : 0;
       const prev = eventFade.get(it.id);
@@ -124,7 +128,8 @@ export function createTimeEngine(map, { states, labels, fronts, events, changeSh
         map.setFeatureState({ source: 'event-labels', id: it.id }, { f });
         eventFade.set(it.id, { f, h, sel });
       }
-      if (f > 0 && it.ev.lon != null && (sel || (age <= 45 && it.imp <= 2))) labelled.push(it.ev);
+      // ausgewählte Ereignisse mit Teilungsplan nicht beschriften: dann ist der Plan beschriftet
+      if (f > 0 && it.ev.lon != null && !(sel && it.ev.plan) && (sel || (age <= 45 && (it.imp <= 2 || theme)))) labelled.push(it.ev);
     }
     const ids = labelled.map((e) => e.id).join();
     if (ids !== labelIds) {
@@ -147,6 +152,7 @@ export function createTimeEngine(map, { states, labels, fronts, events, changeSh
   function update(day) {
     const statesChanged = stateSet.update(day);
     frontSet?.update(day);
+    adminSet?.update(day);
     const le = epochOf(labelBp, day);
     if (le !== labelEpoch) {
       labelEpoch = le;
@@ -184,6 +190,10 @@ export function createTimeEngine(map, { states, labels, fronts, events, changeSh
     setSelection(sel, day) {
       selectedEvent = sel && sel.kind === 'event' ? sel.id : -1;
       setFocusChange(sel && sel.kind === 'change' ? sel.id : -1);
+      updateEvents(day);
+    },
+    setTheme(t, day) {
+      theme = t;
       updateEvents(day);
     },
   };

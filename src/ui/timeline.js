@@ -121,9 +121,11 @@ export function createTimeline({ tape, overview, tooltip, onPick }) {
       if (x < -5 || x > W + 5) continue;
       const r = c.imp === 1 ? 3.6 : c.imp === 2 ? 2.8 : 2.1;
       ctx.fillStyle = hover && hover.kind === 'change' && hover.id === c.id ? SIGNAL : 'rgba(37,42,49,0.55)';
+      ctx.globalAlpha = c.dim ? 0.25 : 1;
       ctx.beginPath();
       ctx.moveTo(x, cy - r); ctx.lineTo(x + r, cy); ctx.lineTo(x, cy + r); ctx.lineTo(x - r, cy);
       ctx.fill();
+      ctx.globalAlpha = 1;
     }
 
     // Ereignisse als farbige Striche

@@ -27,7 +27,7 @@ export default [
     text: `Britisch-Indien wird in die unabhängigen Staaten Indien und Pakistan geteilt. Bei Massenflucht und Gewalt zwischen Hindus, Muslimen und Sikhs werden 10 bis 15 Millionen Menschen vertrieben, bis zu eine Million sterben. Um Kaschmir bricht noch im selben Jahr ein Krieg aus.`,
   },
   {
-    d: '1947-11-29', title: 'UN-Teilungsplan für Palästina', cat: 'vertrag', imp: 2, place: 'Lake Success (New York)', at: [-73.7176, 40.7712], wiki: 'UN-Teilungsplan für Palästina',
+    d: '1947-11-29', title: 'UN-Teilungsplan für Palästina', cat: 'vertrag', imp: 2, place: 'Lake Success (New York)', at: [-73.7176, 40.7712], wiki: 'UN-Teilungsplan für Palästina', theme: 'nahost', plan: 'un1947',
     text: `Die UN-Generalversammlung beschließt die Teilung des britischen Mandatsgebiets in einen jüdischen und einen arabischen Staat, Jerusalem soll internationalisiert werden. Die jüdische Seite stimmt zu, die arabischen Staaten lehnen ab; es folgt ein Bürgerkrieg.`,
   },
   // 1948
@@ -36,7 +36,7 @@ export default [
     text: `Nach dem Rücktritt nichtkommunistischer Minister erzwingt die KPČ mit Massendemonstrationen und bewaffneten Milizen eine von ihr dominierte Regierung. Die Tschechoslowakei wird Teil des sowjetischen Machtbereichs.`,
   },
   {
-    d: '1948-05-14', title: 'Gründung Israels und Palästinakrieg', cat: 'krieg', imp: 1, place: 'Tel Aviv', at: [34.7818, 32.0853], wiki: 'Palästinakrieg',
+    d: '1948-05-14', title: 'Gründung Israels und Palästinakrieg', cat: 'krieg', imp: 1, place: 'Tel Aviv', at: [34.7818, 32.0853], wiki: 'Palästinakrieg', theme: 'nahost',
     text: `David Ben-Gurion ruft den Staat Israel aus. Am nächsten Tag greifen Ägypten, Jordanien, Syrien, Libanon und Irak an. Israel behauptet sich und vergrößert sein Gebiet; rund 700 000 Palästinenserinnen und Palästinenser fliehen oder werden vertrieben (Nakba). Gaza fällt unter ägyptische, das Westjordanland unter jordanische Kontrolle.`,
   },
   {
@@ -181,7 +181,7 @@ export default [
     text: `Eine Studentendemonstration wird zum landesweiten Aufstand. Ministerpräsident Imre Nagy kündigt den Austritt aus dem Warschauer Pakt an. Am 4. November schlagen sowjetische Truppen den Aufstand nieder; rund 2500 Ungarn sterben, etwa 200 000 fliehen in den Westen. Nagy wird 1958 hingerichtet.`,
   },
   {
-    d: '1956-10-29', end: '1956-11-07', title: 'Suezkrise', cat: 'krise', imp: 1, place: 'Port Said', at: [32.3019, 31.2653], wiki: 'Sueskrise',
+    d: '1956-10-29', end: '1956-11-07', title: 'Suezkrise', cat: 'krise', imp: 1, place: 'Port Said', at: [32.3019, 31.2653], wiki: 'Sueskrise', theme: 'nahost',
     text: `Nachdem Ägyptens Präsident Nasser den Suezkanal verstaatlicht hat, greifen Israel, Großbritannien und Frankreich an. Auf Druck der USA und der Sowjetunion müssen sie sich zurückziehen – ein Zeichen für das Ende der Weltmachtrolle der europäischen Kolonialmächte.`,
   },
   {

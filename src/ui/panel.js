@@ -5,6 +5,10 @@ import { formatShort, formatPrecision, parts } from '../lib/dates.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
+export const THEME_NAMES = { nahost: 'Nahostkonflikt' };
+// Ausschnitt [West, Süd, Ost, Nord] für Gebietsänderungen und die Kartenansicht eines Themas
+export const THEME_REGIONS = { nahost: [29, 27, 37, 34.8] };
+
 export function createPanel({ events, changes, onFocus }) {
   const listEl = document.getElementById('items');
   const listWrap = document.getElementById('panel-list');
@@ -124,11 +128,32 @@ export function createPanel({ events, changes, onFocus }) {
 
   const norm = (s) => s.toLocaleLowerCase('de').normalize('NFD').replace(/[̀-ͯ]/g, '');
 
+  // Schwerpunktthema: Ereignisse mit passendem Thema, Gebietsänderungen in der Region
+  const inTheme = (it, kind) => {
+    if (!state.theme) return true;
+    if (kind === 'event') return it.theme === state.theme;
+    const [w, s, e, n] = it.bbox, [rw, rs, re, rn] = THEME_REGIONS[state.theme];
+    return !(e < rw || w > re || n < rs || s > rn);
+  };
+  const themeBanner = document.getElementById('theme-banner');
+  function renderThemeBanner() {
+    themeBanner.hidden = !state.theme;
+    if (!state.theme) return;
+    const nEvents = events.filter((e) => inTheme(e, 'event')).length;
+    const nChanges = changes.filter((c) => inTheme(c, 'change')).length;
+    themeBanner.innerHTML = `<span><b>Schwerpunkt ${esc(THEME_NAMES[state.theme])}</b> · ${nEvents} Ereignisse · ${nChanges} Gebietsänderungen</span><button type="button" data-act="theme-off" title="Schwerpunkt aufheben"><svg><use href="#i-close"/></svg></button>`;
+  }
+  themeBanner.addEventListener('click', (e) => {
+    if (e.target.closest('[data-act="theme-off"]')) set({ theme: null });
+  });
+
   function filterItems() {
     const q = norm(state.query);
     const source = state.tab === 'events' ? events : changes;
+    const kind = state.tab === 'events' ? 'event' : 'change';
     return source.filter((it) => {
       const cat = state.tab === 'events' ? it.cat : it.type;
+      if (!inTheme(it, kind)) return false;
       if (state.categories && !state.categories.has(cat)) return false;
       if (!q) return true;
       return norm(`${it.title} ${it.place ?? ''} ${it.text ?? ''} ${it.to ?? ''} ${it.from ?? ''}`).includes(q);
@@ -227,13 +252,14 @@ export function createPanel({ events, changes, onFocus }) {
         ? `https://de.wikipedia.org/w/index.php?search=${encodeURIComponent(it.wiki)}&title=Spezial%3ASuche&go=Artikel`
         : null;
       body = `
-        <div class="detail-kicker"><span class="cat"><i style="background:${c?.color}"></i>${esc(c?.name)}</span></div>
+        <div class="detail-kicker"><span class="cat"><i style="background:${c?.color}"></i>${esc(c?.name)}</span>${it.theme ? `<span class="theme-tag">${esc(THEME_NAMES[it.theme])}</span>` : ''}</div>
         <div class="detail-date">${esc(date)}</div>
         <h2 class="detail-title">${esc(it.title)}</h2>
         ${it.place ? `<div class="detail-place"><svg><use href="#i-pin"/></svg>${esc(it.place)}</div>` : ''}
         <div class="detail-text">${paragraphs}</div>
+        ${it.plan ? `<p class="detail-note">Die Karte zeigt den Plan schematisch, nachgezeichnet nach einer zeitgenössischen Karte; Linien können um einige Kilometer abweichen.</p>` : ''}
         <div class="detail-links">
-          ${it.lon != null ? `<button type="button" class="link-btn" data-act="fly"><svg><use href="#i-pin"/></svg>Auf der Karte zeigen</button>` : ''}
+          ${it.lon != null || it.plan ? `<button type="button" class="link-btn" data-act="fly"><svg><use href="#i-pin"/></svg>${it.plan ? 'Plan auf der Karte zeigen' : 'Auf der Karte zeigen'}</button>` : ''}
           ${wiki ? `<a class="link-btn" href="${wiki}" target="_blank" rel="noopener"><svg><use href="#i-ext"/></svg>Wikipedia</a>` : ''}
         </div>`;
     } else {
@@ -285,7 +311,8 @@ export function createPanel({ events, changes, onFocus }) {
       searchEl.placeholder = s.tab === 'events' ? 'Suchen, z. B. Stalingrad' : 'Suchen, z. B. Sudetenland';
     }
     if (changed.includes('tab') || changed.includes('categories')) renderChips();
-    if (changed.some((k) => ['tab', 'query', 'categories'].includes(k))) renderList();
+    if (changed.includes('theme')) renderThemeBanner();
+    if (changed.some((k) => ['tab', 'query', 'categories', 'theme'].includes(k))) renderList();
     if (changed.includes('selection')) {
       renderDetail();
       rows.forEach((r) => r.classList.toggle('selected', !!s.selection && String(s.selection.id) === r.dataset.id));
@@ -297,6 +324,7 @@ export function createPanel({ events, changes, onFocus }) {
   });
 
   renderChips();
+  renderThemeBanner();
   renderList();
   setSheet(false);
   return {
