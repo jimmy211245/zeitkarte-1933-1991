@@ -21,6 +21,14 @@ function parseDate(s) {
   return { ymd: y * 10000 + (m || 1) * 100 + (d || 1), prec };
 }
 
+/** Letzter Tag eines Enddatums: 'JJJJ-MM' gilt bis Monatsende, 'JJJJ' bis Jahresende. */
+function lastDay({ ymd, prec }) {
+  const y = Math.floor(ymd / 10000);
+  if (prec === 'y') return y * 10000 + 1231;
+  if (prec === 'm') return ymd - 1 + new Date(Date.UTC(y, Math.floor((ymd % 10000) / 100), 0)).getUTCDate();
+  return ymd;
+}
+
 const all = [];
 for (const file of fs.readdirSync(DIR).filter((f) => f.endsWith('.mjs')).sort()) {
   const mod = await import(pathToFileURL(path.join(DIR, file)).href);
@@ -32,6 +40,7 @@ const out = all
   .map((ev) => {
     const a = parseDate(ev.d);
     const b = ev.end ? parseDate(ev.end) : null;
+    const bLast = b ? lastDay(b) : null;
     if (!CATS.has(ev.cat)) problems.push(`${ev.d} ${ev.title}: unbekannte Kategorie ${ev.cat}`);
     if (!ev.title || !ev.text) problems.push(`${ev.d}: Titel oder Text fehlt`);
     if (ev.at && (Math.abs(ev.at[0]) > 180 || Math.abs(ev.at[1]) > 90)) problems.push(`${ev.d} ${ev.title}: Koordinaten vertauscht?`);
@@ -39,10 +48,10 @@ const out = all
     if (ev.plan && !PLANS.has(ev.plan)) problems.push(`${ev.d} ${ev.title}: unbekannter Plan ${ev.plan}`);
     return {
       t: dayIndex(a.ymd),
-      te: b ? dayIndex(b.ymd) : dayIndex(a.ymd),
+      te: b ? dayIndex(bLast) : dayIndex(a.ymd),
       ymd: a.ymd,
       prec: a.prec,
-      ...(b ? { end: b.ymd, tEnd: dayIndex(b.ymd), precEnd: b.prec } : {}),
+      ...(b ? { end: bLast, tEnd: dayIndex(bLast), precEnd: b.prec } : {}),
       title: ev.title,
       text: ev.text.trim().replace(/\s+\n/g, '\n'),
       cat: ev.cat,

@@ -18,13 +18,19 @@ export function topoToGeoJSON(topology, objectName) {
   const t = topology.transform;
   const point = (p) => (t ? [p[0] * t.scale[0] + t.translate[0], p[1] * t.scale[1] + t.translate[1]] : p);
 
-  const ring = (indexes) => {
+  // Bögen aneinanderhängen (gemeinsame Endpunkte nur einmal)
+  const line = (indexes) => {
     const out = [];
     indexes.forEach((i, k) => {
       const a = i < 0 ? arcs[~i].slice().reverse() : arcs[i];
       for (let j = k === 0 ? 0 : 1; j < a.length; j++) out.push(a[j]);
     });
-    if (out.length < 4) while (out.length < 4) out.push(out[0]);
+    return out;
+  };
+  // Ringe brauchen mindestens 4 Punkte; Linien nicht auffüllen, sonst entsteht ein Rücksprung zum Anfang
+  const ring = (indexes) => {
+    const out = line(indexes);
+    while (out.length < 4) out.push(out[0]);
     return out;
   };
 
@@ -32,8 +38,8 @@ export function topoToGeoJSON(topology, objectName) {
     switch (g.type) {
       case 'Polygon': return { type: 'Polygon', coordinates: g.arcs.map(ring) };
       case 'MultiPolygon': return { type: 'MultiPolygon', coordinates: g.arcs.map((p) => p.map(ring)) };
-      case 'LineString': return { type: 'LineString', coordinates: ring(g.arcs) };
-      case 'MultiLineString': return { type: 'MultiLineString', coordinates: g.arcs.map(ring) };
+      case 'LineString': return { type: 'LineString', coordinates: line(g.arcs) };
+      case 'MultiLineString': return { type: 'MultiLineString', coordinates: g.arcs.map(line) };
       case 'Point': return { type: 'Point', coordinates: point(g.coordinates) };
       default: return null;
     }

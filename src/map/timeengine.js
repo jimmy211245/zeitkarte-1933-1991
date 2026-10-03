@@ -163,7 +163,12 @@ export function createTimeEngine(map, { states, labels, fronts, admin, events, c
       year = y;
       map.setGlobalStateProperty('year', y);
     }
-    if (mode === 'blocs' && (statesChanged || lastDay === null || blocEpochChanged(day))) applyColors(day);
+    if (mode === 'blocs') {
+      // immer auswerten (nicht hinter statesChanged kurzschließen), sonst veraltet der gemerkte
+      // Bündnisabschnitt und ein späterer Sprung zurück in ihn bliebe unbemerkt
+      const blocsChanged = blocEpochChanged(day);
+      if (statesChanged || blocsChanged || lastDay === null) applyColors(day);
+    }
     if (day !== lastDay) updateEvents(day);
     lastDay = day;
   }

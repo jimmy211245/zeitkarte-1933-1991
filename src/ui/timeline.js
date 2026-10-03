@@ -1,7 +1,7 @@
 // Zeitband: feste rote Nadel in der Mitte, das Band läuft darunter durch.
 // Ziehen = Zeit verschieben, Mausrad = Maßstab ändern, Klick auf eine Marke = Ereignis öffnen.
 import { state, set, subscribe } from '../state.js';
-import { START, END, fromIso, parts, yearStart, formatShort, toDay } from '../lib/dates.js';
+import { START, END, fromIso, parts, yearStart, formatShortPrecision, toDay } from '../lib/dates.js';
 import { ERAS } from '../data/eras.js';
 import { CATEGORIES } from '../data/categories.js';
 
@@ -278,13 +278,14 @@ export function createTimeline({ tape, overview, tooltip, onPick }) {
   overview.addEventListener('pointerdown', (e) => { odrag = true; overview.setPointerCapture(e.pointerId); jumpOverview(e); });
   overview.addEventListener('pointermove', (e) => odrag && jumpOverview(e));
   overview.addEventListener('pointerup', () => (odrag = false));
+  overview.addEventListener('pointercancel', () => (odrag = false));
 
   function showTooltip(h, x) {
     if (!h) { tooltip.hidden = true; return; }
     const item = h.kind === 'event' ? markers.byEvent.get(h.id) : markers.byChange.get(h.id);
     if (!item) { tooltip.hidden = true; return; }
     tooltip.hidden = false;
-    tooltip.querySelector('.tt-date').textContent = formatShort(h.t);
+    tooltip.querySelector('.tt-date').textContent = formatShortPrecision(h.t, item.prec);
     tooltip.querySelector('.tt-title').textContent = item.title;
     const r = tape.getBoundingClientRect();
     const tw = tooltip.offsetWidth;

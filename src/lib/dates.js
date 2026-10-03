@@ -75,6 +75,14 @@ export function formatPrecision(day, precision = 'd') {
   return formatLong(day);
 }
 
+/** Kurzform gemäß Genauigkeit: "1. Sept. 1939", "Sept. 1939" oder "1939". */
+export function formatShortPrecision(day, precision = 'd') {
+  const { y, m } = parts(day);
+  if (precision === 'y') return String(y);
+  if (precision === 'm') return `${MONTHS_SHORT[m - 1]} ${y}`;
+  return formatShort(day);
+}
+
 export function addMonths(day, n) {
   const { y, m, d } = parts(day);
   const dt = new Date(Date.UTC(y, m - 1 + n, 1));

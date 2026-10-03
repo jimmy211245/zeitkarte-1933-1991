@@ -17,11 +17,19 @@ import { setupAbout } from './ui/about.js';
 const DATA = new URL(`${import.meta.env.BASE_URL}data`, window.location.href).href.replace(/\/$/, '');
 
 // --- Zustand aus der Adresse lesen (#1939-09-01/4.2/15.00/50.00) -----------------------------
+// Ausschnitt nur übernehmen, wenn die Zahlen gültig sind – sonst bricht MapLibre beim Start ab
+function viewFromHash(h) {
+  if (h.length < 4) return null;
+  const [zoom, lng, lat] = h.slice(1, 4).map(Number);
+  if (![zoom, lng, lat].every(Number.isFinite) || Math.abs(lat) > 90) return null;
+  return { zoom, center: [lng, lat] };
+}
 const hash = location.hash.slice(1).split('/');
 if (/^\d{4}-\d{2}-\d{2}$/.test(hash[0] ?? '')) state.day = Math.max(START, Math.min(END, fromIso(hash[0])));
-const initialView = hash.length >= 4 ? { zoom: +hash[1], center: [+hash[2], +hash[3]] } : { zoom: 3.6, center: [15, 50] };
-// Schwerpunktthema per Link (?thema=nahost)
-if (new URLSearchParams(location.search).get('thema') in THEME_REGIONS) state.theme = new URLSearchParams(location.search).get('thema');
+const initialView = viewFromHash(hash) ?? { zoom: 3.6, center: [15, 50] };
+// Schwerpunktthema per Link (?thema=nahost); nur eigene Schlüssel, nicht z. B. „toString“
+const themeParam = new URLSearchParams(location.search).get('thema');
+if (themeParam && Object.hasOwn(THEME_REGIONS, themeParam)) state.theme = themeParam;
 // Kartenausschnitt beim Einschalten eines Schwerpunkts [[West, Süd], [Ost, Nord]]
 const THEME_VIEW = { nahost: [[31.6, 29.4], [37.2, 34.0]] };
 
@@ -61,9 +69,10 @@ window.addEventListener('hashchange', () => {
     const d = fromIso(h[0]);
     if (Math.abs(d - state.day) > 0) set({ day: d, playing: false });
   }
-  if (h.length >= 4) {
+  const view = viewFromHash(h);
+  if (view) {
     const c = map.getCenter();
-    if (Math.abs(c.lng - +h[2]) > 0.01 || Math.abs(c.lat - +h[3]) > 0.01 || Math.abs(map.getZoom() - +h[1]) > 0.01) map.jumpTo({ zoom: +h[1], center: [+h[2], +h[3]] });
+    if (Math.abs(c.lng - view.center[0]) > 0.01 || Math.abs(c.lat - view.center[1]) > 0.01 || Math.abs(map.getZoom() - view.zoom) > 0.01) map.jumpTo(view);
   }
 });
 
@@ -127,7 +136,7 @@ function setTimelineMarkers() {
   const region = state.theme ? THEME_REGIONS[state.theme] : null;
   const inRegion = (b) => !region || !(b[2] < region[0] || b[0] > region[2] || b[3] < region[1] || b[1] > region[3]);
   timeline.setMarkers(
-    events.map((e) => ({ id: e.id, t: e.t, cat: e.cat, imp: e.imp, title: e.title, dim: !!state.theme && e.theme !== state.theme })),
+    events.map((e) => ({ id: e.id, t: e.t, prec: e.prec, cat: e.cat, imp: e.imp, title: e.title, dim: !!state.theme && e.theme !== state.theme })),
     changes.map((c) => ({ id: c.id, t: c.t, imp: c.imp, title: c.title, dim: !inRegion(c.bbox) })),
   );
 }
@@ -160,7 +169,12 @@ map.on('load', async () => {
   });
   engine = createTimeEngine(map, { states: statesData, labels: labelsData, fronts: frontsData, admin: adminData, events, changeShapes, onBlocs: setBlocLegend });
   setupInteractions(map, {
-    onEvent: (id) => { set({ tab: 'events' }); panel.open('event', id, { jump: false }); },
+    onEvent: (id) => {
+      // wie beim Zeitband: beim Wechsel zur Ereignisliste die Filter der Gebietsänderungen verwerfen,
+      // sonst filtern Änderungsarten die Ereignisliste und sie bleibt leer
+      if (state.tab !== 'events') set({ tab: 'events', categories: null });
+      panel.open('event', id, { jump: false });
+    },
     isStateActive: engine.isStateActive,
     isEventVisible: engine.isEventVisible,
   });
@@ -212,13 +226,17 @@ let last = 0;
 let raf = 0;
 // Tagesbruchteile beim Abspielen separat mitführen, damit auch langsame Geschwindigkeiten laufen
 let playDay = state.day;
+// zuletzt vom Abspielen gesetztes Datum, um Sprünge von außen (z. B. Übersichtsleiste) zu erkennen
+let tickDay = state.day;
 function tick(now) {
   if (!state.playing) return;
   const dt = Math.min(0.1, (now - last) / 1000);
   last = now;
+  if (state.day !== tickDay) playDay = state.day;
   playDay += state.speed * dt;
   if (playDay >= END) set({ day: END, playing: false });
   else set({ day: playDay });
+  tickDay = state.day;
   raf = requestAnimationFrame(tick);
 }
 
@@ -339,7 +357,7 @@ subscribe((s, changed) => {
     playBtn.title = s.playing ? 'Anhalten (Leertaste)' : 'Abspielen (Leertaste)';
     if (s.playing) {
       if (s.day >= END) set({ day: START });
-      playDay = state.day;
+      playDay = tickDay = state.day;
       last = performance.now();
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(tick);

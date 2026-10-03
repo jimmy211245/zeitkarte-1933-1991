@@ -1,6 +1,7 @@
 // Bündniszugehörigkeit je Zeitraum für die Ansicht "Bündnisse".
 // Regeln werden in Reihenfolge geprüft; die erste passende gewinnt.
 // Abhängige Gebiete (Kolonien, Annexionen) erhalten die Farbe ihres Souveräns.
+import { toDay, toYmd } from '../lib/dates.js';
 
 export const BLOCS = {
   achse: { name: 'Achsenmächte und Verbündete', color: '#b5655b' },
@@ -132,5 +133,7 @@ export function blocOf(key, ymd, lx, ly) {
   return 'sonstige';
 }
 
-/** Alle Stichtage, an denen sich eine Zuordnung ändern kann (für effizientes Neuzeichnen) */
-export const BLOC_BREAKS = [...new Set([...COMPILED.flatMap((r) => [r.a, r.b]), 19361025, 19450902, 19470902, 19550418])].sort((a, b) => a - b);
+/** Alle Stichtage, an denen sich eine Zuordnung ändern kann (für effizientes Neuzeichnen).
+ *  Regeln gelten bis einschließlich `bis`, die Änderung tritt also erst am Folgetag ein. */
+const nextDay = (ymd) => toYmd(toDay(ymd) + 1);
+export const BLOC_BREAKS = [...new Set([...COMPILED.flatMap((r) => [r.a, nextDay(r.b)]), 19361025, nextDay(19450902), 19470902, 19550418])].sort((a, b) => a - b);

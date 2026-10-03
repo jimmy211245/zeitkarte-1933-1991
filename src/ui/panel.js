@@ -1,7 +1,7 @@
 // Seitenleiste: Listen für Ereignisse und Gebietsänderungen, Suche, Filter und Detailansicht.
 import { state, set, subscribe } from '../state.js';
 import { CATEGORIES, CHANGE_TYPES } from '../data/categories.js';
-import { formatShort, formatPrecision, parts } from '../lib/dates.js';
+import { formatShortPrecision, formatPrecision, parts } from '../lib/dates.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
@@ -72,7 +72,7 @@ export function createPanel({ events, changes, onFocus }) {
       return;
     }
     const dot = kind === 'event' ? `<span class="dot" style="background:${CATEGORIES[it.cat]?.color}"></span>` : '';
-    peekEl.innerHTML = `<span class="peek-when">${esc(formatShort(it.t))}</span><span class="peek-what">${dot}${esc(it.title)}</span>`;
+    peekEl.innerHTML = `<span class="peek-when">${esc(formatShortPrecision(it.t, it.prec))}</span><span class="peek-what">${dot}${esc(it.title)}</span>`;
   }
 
   // Kategorie-Chips
@@ -176,9 +176,9 @@ export function createPanel({ events, changes, onFocus }) {
       if (y !== lastYear) { html += `<li class="year-sep">${y}</li>`; lastYear = y; }
       if (state.tab === 'events') {
         const c = CATEGORIES[it.cat];
-        html += `<li class="item" data-id="${it.id}"><span class="when">${esc(formatShort(it.t).replace(/ \d{4}$/, ''))}</span><span class="what"><span class="dot" style="background:${c?.color}"></span>${esc(it.title)}</span>${it.place ? `<span class="sub">${esc(it.place)}</span>` : ''}</li>`;
+        html += `<li class="item" data-id="${it.id}"><span class="when">${esc(formatShortPrecision(it.t, it.prec).replace(/ \d{4}$/, ''))}</span><span class="what"><span class="dot" style="background:${c?.color}"></span>${esc(it.title)}</span>${it.place ? `<span class="sub">${esc(it.place)}</span>` : ''}</li>`;
       } else {
-        html += `<li class="item" data-id="${it.id}"><span class="when">${esc(formatShort(it.t).replace(/ \d{4}$/, ''))}</span><span class="what">${esc(it.title)}</span><span class="sub">${esc(CHANGE_TYPES[it.type] ?? '')}${it.area ? ` · ca. ${it.area.toLocaleString('de-DE')} km²` : ''}</span></li>`;
+        html += `<li class="item" data-id="${it.id}"><span class="when">${esc(formatShortPrecision(it.t, it.prec).replace(/ \d{4}$/, ''))}</span><span class="what">${esc(it.title)}</span><span class="sub">${esc(CHANGE_TYPES[it.type] ?? '')}${it.area ? ` · ca. ${it.area.toLocaleString('de-DE')} km²` : ''}</span></li>`;
       }
     }
     listEl.innerHTML = html;
@@ -282,8 +282,8 @@ export function createPanel({ events, changes, onFocus }) {
       </div>
       <div class="detail-body">${body}</div>
       <div class="detail-nav">
-        ${prev ? `<button type="button" data-nav="${prev.id}"><small>${esc(formatShort(prev.t))}</small>${esc(prev.title)}</button>` : '<span></span>'}
-        ${next ? `<button type="button" data-nav="${next.id}"><small>${esc(formatShort(next.t))}</small>${esc(next.title)}</button>` : '<span></span>'}
+        ${prev ? `<button type="button" data-nav="${prev.id}"><small>${esc(formatShortPrecision(prev.t, prev.prec))}</small>${esc(prev.title)}</button>` : '<span></span>'}
+        ${next ? `<button type="button" data-nav="${next.id}"><small>${esc(formatShortPrecision(next.t, next.prec))}</small>${esc(next.title)}</button>` : '<span></span>'}
       </div>`;
     listWrap.hidden = true;
     detailEl.hidden = false;
@@ -319,6 +319,11 @@ export function createPanel({ events, changes, onFocus }) {
       updatePeek();
     }
     if (changed.includes('day')) markCurrent();
+    // Suchbegriff von außen zurückgesetzt (z. B. Klick auf eine Marke im Zeitband): Feld angleichen
+    if (changed.includes('query') && searchEl.value.trim() !== s.query) {
+      clearTimeout(searchTimer);
+      searchEl.value = s.query;
+    }
     // beim Abspielen soll die Karte frei sein
     if (changed.includes('playing') && s.playing && sheetMq.matches) setSheet(false);
   });
