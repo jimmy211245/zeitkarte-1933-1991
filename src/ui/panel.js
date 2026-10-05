@@ -232,8 +232,23 @@ export function createPanel({ events, changes, onFocus }) {
     if (!it) return;
     set({ selection: { kind, id }, ...(jump ? { day: it.t, playing: false } : {}) });
     if (reveal && sheetMq.matches) setSheet(true);
+    // ausgewählte Einträge (Klick auf Karte oder Zeitband) brauchen die Detailansicht
+    if (reveal && collapsed) setCollapsed(false);
     onFocus(kind, it);
   }
+
+  // Seitenleiste ein- und ausblenden (breite Bildschirme), Wahl im Browser merken
+  const openBtn = document.getElementById('panel-open');
+  let collapsed = false;
+  try { collapsed = localStorage.getItem('panel-collapsed') === '1'; } catch { /* privat */ }
+  function setCollapsed(c) {
+    collapsed = c;
+    document.body.classList.toggle('panel-collapsed', c);
+    openBtn.hidden = !c;
+    try { localStorage.setItem('panel-collapsed', c ? '1' : '0'); } catch { /* privat */ }
+  }
+  document.getElementById('panel-collapse').addEventListener('click', () => setCollapsed(true));
+  openBtn.addEventListener('click', () => setCollapsed(false));
 
   function renderDetail() {
     const sel = state.selection;
@@ -341,9 +356,12 @@ export function createPanel({ events, changes, onFocus }) {
   renderCounts();
   renderList();
   setSheet(false);
+  setCollapsed(collapsed);
   return {
     open,
     /** Höhe des Bereichs, den das Blatt unten von der Karte verdeckt (0 bei Seitenleiste) */
     coveredHeight: () => (sheetMq.matches ? (sheetOpen ? panel.offsetHeight : head.offsetHeight) : 0),
+    /** Ist die Seitenleiste auf breiten Bildschirmen ausgeblendet? */
+    isCollapsed: () => collapsed && !sheetMq.matches,
   };
 }
