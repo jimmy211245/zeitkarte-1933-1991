@@ -26,6 +26,7 @@
       <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0113 0c0 4.8-6.5 11-6.5 11z" fill="none" stroke="currentColor" stroke-width="1.8" /><circle cx="12" cy="10" r="2.3" fill="currentColor" /></symbol>
       <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8M17 14v5H5V7h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></symbol>
       <symbol id="i-focus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="1.8" /><circle cx="12" cy="12" r="2.6" fill="currentColor" /><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></symbol>
       <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8" /><path d="M12 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><circle cx="12" cy="7.6" r="1.2" fill="currentColor" /></symbol>
     </svg>
 
@@ -39,10 +40,13 @@
             <button type="button" role="radio" aria-checked="true" data-mode="states">Staaten</button>
             <button type="button" role="radio" aria-checked="false" data-mode="blocs">Bündnisse</button>
           </div>
-          <button type="button" class="theme-btn" id="theme-btn" aria-pressed="false" title="Schwerpunkt Nahostkonflikt: Liste, Karte und Zeitband auf das Thema beschränken">
-            <svg><use href="#i-focus" /></svg><span class="long">Nahostkonflikt</span><span class="short">Nahost</span>
-          </button>
-          <div class="menu-wrap">
+          <div class="menu-wrap theme-wrap">
+            <button type="button" class="theme-btn" id="theme-btn" aria-expanded="false" aria-controls="theme-menu" title="Schwerpunkt wählen: Liste, Karte und Zeitband auf ein Thema beschränken">
+              <svg><use href="#i-focus" /></svg><span class="long">Schwerpunkt</span><span class="short">Schwerpunkt</span><svg class="chev"><use href="#i-chevron" /></svg>
+            </button>
+            <div class="menu theme-menu" id="theme-menu" role="radiogroup" aria-label="Schwerpunkt" hidden></div>
+          </div>
+          <div class="menu-wrap" id="layers-wrap">
             <button type="button" class="icon-btn" id="layers-btn" aria-expanded="false" aria-controls="layers-menu" title="Ebenen">
               <svg><use href="#i-layers" /></svg><span>Ebenen</span>
             </button>
@@ -51,7 +55,7 @@
               <label><input type="checkbox" data-layer="changes" checked /> Gebietsänderungen hervorheben</label>
               <label><input type="checkbox" data-layer="fronts" checked /> Fronten und Besatzung (ungefähr)</label>
               <label><input type="checkbox" data-layer="admin" checked /> Binnengrenzen (Bundesländer, Teilrepubliken …)</label>
-              <label><input type="checkbox" data-layer="places" checked /> Städte im Nahen Osten</label>
+              <label><input type="checkbox" data-layer="places" checked /> Städte (Nahost, Deutschland)</label>
               <label><input type="checkbox" data-layer="rivers" checked /> Flüsse und Seen</label>
             </div>
           </div>

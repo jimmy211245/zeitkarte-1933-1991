@@ -1,4 +1,4 @@
-// Schritt 7: Schwerpunkt Nahost – schematische Teilungspläne und Städte.
+// Schritt 7: Zusatzebenen der Schwerpunkte – schematische Teilungspläne (Nahost) und Städte (Nahost, Deutschland).
 // Die Pläne werden an der Grenze des Mandatsgebiets (CShapes) abgeschnitten, Seen ausgespart.
 import fs from 'node:fs';
 import path from 'node:path';

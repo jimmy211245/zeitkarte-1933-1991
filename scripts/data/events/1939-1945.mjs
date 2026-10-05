@@ -338,7 +338,7 @@ Hinter der Front ermorden Einsatzgruppen von SS und Polizei Zehntausende Angehö
     text: `Soldaten der Roten Armee finden rund 7000 kranke und entkräftete Häftlinge vor. Die SS hatte zuvor Zehntausende auf Todesmärsche nach Westen getrieben. Der 27. Januar ist heute internationaler Gedenktag für die Opfer des Holocaust.`,
   },
   {
-    d: '1945-02-04', end: '1945-02-11', title: 'Konferenz von Jalta', cat: 'vertrag', imp: 1, place: 'Jalta (Krim)', at: [34.143, 44.4952], wiki: 'Konferenz von Jalta',
+    d: '1945-02-04', end: '1945-02-11', title: 'Konferenz von Jalta', cat: 'vertrag', imp: 1, place: 'Jalta (Krim)', at: [34.143, 44.4952], wiki: 'Konferenz von Jalta', themes: ['deutsche-teilung'],
     text: `Roosevelt, Churchill und Stalin beschließen die Aufteilung Deutschlands in Besatzungszonen, einen Kontrollrat und die Gründung der Vereinten Nationen. Die Sowjetunion sagt den Kriegseintritt gegen Japan zu; Polens Ostgrenze soll der Curzon-Linie folgen.`,
   },
   {
@@ -374,11 +374,11 @@ Hinter der Front ermorden Einsatzgruppen von SS und Polizei Zehntausende Angehö
     text: `Hitler erschießt sich im Bunker unter der Reichskanzlei, Eva Braun nimmt Gift. Zum Nachfolger als Reichspräsident hat er Großadmiral Karl Dönitz bestimmt. Zwei Tage zuvor war Mussolini von Partisanen erschossen worden.`,
   },
   {
-    d: '1945-05-08', title: 'Bedingungslose Kapitulation der Wehrmacht', cat: 'krieg', imp: 1, place: 'Berlin-Karlshorst', at: [13.5317, 52.4867], wiki: 'Bedingungslose Kapitulation der Wehrmacht',
+    d: '1945-05-08', title: 'Bedingungslose Kapitulation der Wehrmacht', cat: 'krieg', imp: 1, place: 'Berlin-Karlshorst', at: [13.5317, 52.4867], wiki: 'Bedingungslose Kapitulation der Wehrmacht', themes: ['deutsche-teilung'],
     text: `Nach der Unterzeichnung in Reims am 7. Mai wird die Kapitulation in Berlin-Karlshorst wiederholt; sie tritt am 8. Mai um 23.01 Uhr in Kraft. Der Krieg in Europa ist beendet. Er hat dort weit über 40 Millionen Menschen das Leben gekostet, darunter rund sechs Millionen ermordete Jüdinnen und Juden.`,
   },
   {
-    d: '1945-06-05', title: 'Berliner Erklärung: Alliierte übernehmen die Regierungsgewalt', cat: 'politik', imp: 2, place: 'Berlin', at: [13.4, 52.52], wiki: 'Berliner Erklärung (1945)',
+    d: '1945-06-05', title: 'Berliner Erklärung: Alliierte übernehmen die Regierungsgewalt', cat: 'politik', imp: 2, place: 'Berlin', at: [13.4, 52.52], wiki: 'Berliner Erklärung (1945)', themes: ['deutsche-teilung'],
     text: `Die vier Siegermächte übernehmen die oberste Regierungsgewalt in Deutschland. Das Land wird in vier Besatzungszonen, Berlin in vier Sektoren geteilt; Österreich erhält eine eigene Viermächteverwaltung.`,
   },
   {
@@ -390,7 +390,7 @@ Hinter der Front ermorden Einsatzgruppen von SS und Polizei Zehntausende Angehö
     text: `Im Rahmen des Manhattan-Projekts zünden die USA in der Wüste von New Mexico die erste Atombombe. Präsident Truman deutet Stalin in Potsdam an, dass die USA eine neue Waffe besitzen.`,
   },
   {
-    d: '1945-07-17', end: '1945-08-02', title: 'Potsdamer Konferenz', cat: 'vertrag', imp: 1, place: 'Potsdam, Schloss Cecilienhof', at: [13.0712, 52.4192], wiki: 'Potsdamer Konferenz',
+    d: '1945-07-17', end: '1945-08-02', title: 'Potsdamer Konferenz', cat: 'vertrag', imp: 1, place: 'Potsdam, Schloss Cecilienhof', at: [13.0712, 52.4192], wiki: 'Potsdamer Konferenz', themes: ['deutsche-teilung'],
     text: `Truman, Stalin und Churchill (ab 28. Juli Attlee) legen die Grundsätze der Besatzungspolitik fest: Entmilitarisierung, Entnazifizierung, Demokratisierung, Dezentralisierung. Die Gebiete östlich von Oder und Neiße kommen unter polnische, das nördliche Ostpreußen unter sowjetische Verwaltung. Die „Überführung“ der deutschen Bevölkerung aus Polen, der Tschechoslowakei und Ungarn wird gebilligt – insgesamt verlieren 12 bis 14 Millionen Deutsche ihre Heimat.`,
   },
   {

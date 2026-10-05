@@ -60,7 +60,7 @@ export function renderLegend(el) {
         ${fronts ? `<li><span class="sw" style="${hatch('transparent', 'rgba(163,38,42,.6)')}"></span>Von den Achsenmächten besetzt (ungefähr)</li><li><span class="sw" style="${hatch('transparent', 'rgba(40,78,140,.6)', -45)}"></span>Von den Alliierten erobertes Achsengebiet</li><li><span class="ln"></span>Frontlinie (ungefähr)</li>` : ''}
         ${state.layers.admin ? `<li><span class="ln ln-admin"></span>Binnengrenze (Bundesland, Teilrepublik …)</li>` : ''}
         <li><span class="sw" style="background:#3d5a80;border-radius:50%;width:11px;height:11px;margin:0 5.5px"></span>Ereignis (verblasst mit der Zeit)</li>
-        ${state.layers.places ? `<li><span class="sw" style="background:#fff;border:1.5px solid #22272e;border-radius:50%;width:9px;height:9px;margin:0 6.5px"></span>Stadt (Nahost, ab mittlerer Zoomstufe)</li>` : ''}
+        ${state.layers.places ? `<li><span class="sw" style="background:#fff;border:1.5px solid #22272e;border-radius:50%;width:9px;height:9px;margin:0 6.5px"></span>Stadt (ab mittlerer Zoomstufe)</li>` : ''}
       </ul>`;
     el.classList.toggle('collapsed', collapsed);
   };
