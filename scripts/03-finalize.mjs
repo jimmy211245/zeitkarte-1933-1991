@@ -6,6 +6,8 @@ import path from 'node:path';
 import * as turf from '@turf/turf';
 import { POLITIES, STATUS_LABELS } from './data/polities.mjs';
 import { CHANGE_NOTES, HIDDEN_CHANGES } from './data/change-notes.mjs';
+import { CHANGE_THEMES } from './data/change-themes.mjs';
+import { themeProblems } from '../src/data/themes.js';
 import { union, intersect, areaKm2 } from './lib/geo.mjs';
 import { D, dayBefore, dayAfter, toIso, dayIndex, START, END } from './lib/dates.mjs';
 import { polylabel } from './lib/polylabel.mjs';
@@ -308,6 +310,27 @@ for (const c of grouped.values()) {
 changes.sort((a, b) => a.properties.d - b.properties.d);
 log('Gebietsänderungen:', changes.length);
 
+// Themenzuordnung (change-themes.mjs) vor dem Schreiben prüfen, damit ein Fehler keine halb
+// aktualisierten Dateien hinterlässt; sie kommt nur in die Liste, nicht in die Flächen
+const themesOfChange = new Map();
+const knownChangeKeys = new Set(changes.map((c) => c.properties.key));
+const themeErrors = [];
+for (const [themeId, keys] of Object.entries(CHANGE_THEMES)) {
+  themeErrors.push(...themeProblems([themeId]).map((p) => `${themeId}: ${p}`));
+  if (!Array.isArray(keys)) {
+    themeErrors.push(`${themeId}: erwartet wird eine Liste von Schlüsseln`);
+    continue;
+  }
+  for (const k of keys) {
+    if (!knownChangeKeys.has(k)) themeErrors.push(`${themeId}: keine Gebietsänderung zu ${k}`);
+    if (!themesOfChange.has(k)) themesOfChange.set(k, []);
+    if (themesOfChange.get(k).includes(themeId)) themeErrors.push(`${themeId}: ${k} doppelt`);
+    else themesOfChange.get(k).push(themeId);
+  }
+}
+if (themeErrors.length) throw new Error(`change-themes.mjs:\n  ! ${themeErrors.join('\n  ! ')}`);
+log('Gebietsänderungen je Thema:', Object.entries(CHANGE_THEMES).map(([id, k]) => `${id} ${k.length}`).join(', '));
+
 // ---------------------------------------------------------------- 7. Ausgabe
 const round = (geom) => turf.truncate(turf.feature(geom), { precision: 4, coordinates: 2 }).geometry;
 const states = finals.map((f, i) => ({
@@ -353,7 +376,10 @@ const writeTopo = (name, fc, q) => {
 writeTopo('states', { type: 'FeatureCollection', features: states }, 400000);
 write('labels.json', { type: 'FeatureCollection', features: labels });
 writeTopo('changes', { type: 'FeatureCollection', features: changes }, 200000);
-write('changes-list.json', changes.map((c) => { const { key, ...p } = c.properties; return p; }));
+write('changes-list.json', changes.map((c) => {
+  const { key, ...p } = c.properties;
+  return themesOfChange.has(key) ? { ...p, themes: themesOfChange.get(key) } : p;
+}));
 
 // Änderungsliste zur Kontrolle
 fs.writeFileSync(

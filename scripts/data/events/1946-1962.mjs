@@ -2,11 +2,11 @@
 export default [
   // 1946
   {
-    d: '1946-03-05', title: 'Churchill spricht vom „Eisernen Vorhang“', cat: 'krise', imp: 2, place: 'Fulton (Missouri)', at: [-91.948, 38.847], wiki: 'Eiserner Vorhang',
+    d: '1946-03-05', title: 'Churchill spricht vom „Eisernen Vorhang“', cat: 'krise', imp: 2, place: 'Fulton (Missouri)', at: [-91.948, 38.847], wiki: 'Eiserner Vorhang', themes: ['deutsche-teilung'],
     text: `In einer Rede in Fulton warnt Winston Churchill, von Stettin an der Ostsee bis Triest an der Adria sei ein „Eiserner Vorhang“ über den Kontinent niedergegangen. Die Rede wird zum Sinnbild der beginnenden Spaltung Europas.`,
   },
   {
-    d: '1946-04-22', title: 'Zwangsvereinigung von KPD und SPD zur SED', cat: 'politik', imp: 3, place: 'Berlin', at: [13.4, 52.52], wiki: 'Zwangsvereinigung von KPD und SPD',
+    d: '1946-04-22', title: 'Zwangsvereinigung von KPD und SPD zur SED', cat: 'politik', imp: 3, place: 'Berlin', at: [13.4, 52.52], wiki: 'Zwangsvereinigung von KPD und SPD', themes: ['deutsche-teilung'],
     text: `In der Sowjetischen Besatzungszone werden KPD und SPD unter Druck zur Sozialistischen Einheitspartei Deutschlands vereinigt. Die SED wird zur Staatspartei der späteren DDR.`,
   },
   {
@@ -19,7 +19,7 @@ export default [
     text: `Präsident Harry S. Truman erklärt vor dem Kongress, die USA würden „freie Völker“ gegen Unterwerfung durch bewaffnete Minderheiten oder äußeren Druck unterstützen – zunächst Griechenland und die Türkei. Die Politik der Eindämmung („Containment“) des Kommunismus beginnt.`,
   },
   {
-    d: '1947-06-05', title: 'Ankündigung des Marshallplans', cat: 'politik', imp: 1, place: 'Harvard University, Cambridge (Massachusetts)', at: [-71.1167, 42.377], wiki: 'Marshallplan',
+    d: '1947-06-05', title: 'Ankündigung des Marshallplans', cat: 'politik', imp: 1, place: 'Harvard University, Cambridge (Massachusetts)', at: [-71.1167, 42.377], wiki: 'Marshallplan', themes: ['deutsche-teilung'],
     text: `US-Außenminister George C. Marshall kündigt ein Wiederaufbauprogramm für Europa an. Die Sowjetunion lehnt die Teilnahme für sich und die von ihr kontrollierten Staaten ab. Bis 1952 fließen rund 13 Milliarden Dollar, auch in die Westzonen Deutschlands.`,
   },
   {
@@ -27,7 +27,7 @@ export default [
     text: `Britisch-Indien wird in die unabhängigen Staaten Indien und Pakistan geteilt. Bei Massenflucht und Gewalt zwischen Hindus, Muslimen und Sikhs werden 10 bis 15 Millionen Menschen vertrieben, bis zu eine Million sterben. Um Kaschmir bricht noch im selben Jahr ein Krieg aus.`,
   },
   {
-    d: '1947-11-29', title: 'UN-Teilungsplan für Palästina', cat: 'vertrag', imp: 2, place: 'Lake Success (New York)', at: [-73.7176, 40.7712], wiki: 'UN-Teilungsplan für Palästina', theme: 'nahost', plan: 'un1947',
+    d: '1947-11-29', title: 'UN-Teilungsplan für Palästina', cat: 'vertrag', imp: 2, place: 'Lake Success (New York)', at: [-73.7176, 40.7712], wiki: 'UN-Teilungsplan für Palästina', themes: ['nahost'], plan: 'un1947',
     text: `Die UN-Generalversammlung beschließt die Teilung des britischen Mandatsgebiets in einen jüdischen und einen arabischen Staat, Jerusalem soll internationalisiert werden. Die jüdische Seite stimmt zu, die arabischen Staaten lehnen ab; es folgt ein Bürgerkrieg.`,
   },
   // 1948
@@ -36,15 +36,15 @@ export default [
     text: `Nach dem Rücktritt nichtkommunistischer Minister erzwingt die KPČ mit Massendemonstrationen und bewaffneten Milizen eine von ihr dominierte Regierung. Die Tschechoslowakei wird Teil des sowjetischen Machtbereichs.`,
   },
   {
-    d: '1948-05-14', title: 'Gründung Israels und Palästinakrieg', cat: 'krieg', imp: 1, place: 'Tel Aviv', at: [34.7818, 32.0853], wiki: 'Palästinakrieg', theme: 'nahost',
+    d: '1948-05-14', title: 'Gründung Israels und Palästinakrieg', cat: 'krieg', imp: 1, place: 'Tel Aviv', at: [34.7818, 32.0853], wiki: 'Palästinakrieg', themes: ['nahost'],
     text: `David Ben-Gurion ruft den Staat Israel aus. Am nächsten Tag greifen Ägypten, Jordanien, Syrien, Libanon und Irak an. Israel behauptet sich und vergrößert sein Gebiet; rund 700 000 Palästinenserinnen und Palästinenser fliehen oder werden vertrieben (Nakba). Gaza fällt unter ägyptische, das Westjordanland unter jordanische Kontrolle.`,
   },
   {
-    d: '1948-06-20', title: 'Währungsreform in den Westzonen', cat: 'politik', imp: 2, place: 'Frankfurt am Main', at: [8.6821, 50.1109], wiki: 'Währungsreform 1948 (Westdeutschland)',
+    d: '1948-06-20', title: 'Währungsreform in den Westzonen', cat: 'politik', imp: 2, place: 'Frankfurt am Main', at: [8.6821, 50.1109], wiki: 'Währungsreform 1948 (Westdeutschland)', themes: ['deutsche-teilung'],
     text: `In den drei westlichen Besatzungszonen wird die D-Mark eingeführt; die Schaufenster füllen sich über Nacht. Die Sowjetunion antwortet mit einer eigenen Währungsreform und der Blockade West-Berlins.`,
   },
   {
-    d: '1948-06-24', end: '1949-05-12', title: 'Berlin-Blockade und Luftbrücke', cat: 'krise', imp: 1, place: 'Berlin-Tempelhof', at: [13.4019, 52.4732], wiki: 'Berlin-Blockade',
+    d: '1948-06-24', end: '1949-05-12', title: 'Berlin-Blockade und Luftbrücke', cat: 'krise', imp: 1, place: 'Berlin-Tempelhof', at: [13.4019, 52.4732], wiki: 'Berlin-Blockade', themes: ['deutsche-teilung'],
     text: `Die Sowjetunion sperrt alle Land- und Wasserwege nach West-Berlin. Amerikanische und britische Flugzeuge versorgen die Stadt fast ein Jahr lang über eine Luftbrücke mit insgesamt über 2,3 Millionen Tonnen Gütern („Rosinenbomber“). Die Blockade scheitert und beschleunigt die Gründung zweier deutscher Staaten.`,
   },
   {
@@ -57,11 +57,11 @@ export default [
   },
   // 1949
   {
-    d: '1949-04-04', title: 'Gründung der NATO', cat: 'vertrag', imp: 1, place: 'Washington', at: [-77.0365, 38.8977], wiki: 'NATO',
+    d: '1949-04-04', title: 'Gründung der NATO', cat: 'vertrag', imp: 1, place: 'Washington', at: [-77.0365, 38.8977], wiki: 'NATO', themes: ['deutsche-teilung'],
     text: `Zwölf Staaten Nordamerikas und Westeuropas schließen den Nordatlantikvertrag. Ein Angriff auf einen Mitgliedstaat gilt als Angriff auf alle. Griechenland und die Türkei treten 1952 bei, die Bundesrepublik 1955, Spanien 1982.`,
   },
   {
-    d: '1949-05-23', title: 'Grundgesetz – Gründung der Bundesrepublik', cat: 'politik', imp: 1, place: 'Bonn', at: [7.0982, 50.7374], wiki: 'Gründung der Bundesrepublik Deutschland',
+    d: '1949-05-23', title: 'Grundgesetz – Gründung der Bundesrepublik', cat: 'politik', imp: 1, place: 'Bonn', at: [7.0982, 50.7374], wiki: 'Gründung der Bundesrepublik Deutschland', themes: ['deutsche-teilung'],
     text: `Das Grundgesetz wird verkündet, die Bundesrepublik Deutschland entsteht aus den drei westlichen Besatzungszonen. Bonn wird provisorische Hauptstadt, im September wird Konrad Adenauer erster Bundeskanzler.`,
   },
   {
@@ -73,12 +73,12 @@ export default [
     text: `Nach dem Sieg im Bürgerkrieg ruft Mao Zedong die Volksrepublik aus. Die Regierung der Republik China unter Chiang Kai-shek zieht sich nach Taiwan zurück.`,
   },
   {
-    d: '1949-10-07', title: 'Gründung der DDR', cat: 'politik', imp: 1, place: 'Berlin', at: [13.4, 52.52], wiki: 'Gründung der DDR',
+    d: '1949-10-07', title: 'Gründung der DDR', cat: 'politik', imp: 1, place: 'Berlin', at: [13.4, 52.52], wiki: 'Gründung der DDR', themes: ['deutsche-teilung'],
     text: `In der Sowjetischen Besatzungszone wird die Deutsche Demokratische Republik gegründet. Die Macht liegt bei der SED; Präsident wird Wilhelm Pieck, Ministerpräsident Otto Grotewohl.`,
   },
   // 1950
   {
-    d: '1950-05-09', title: 'Schuman-Erklärung', cat: 'vertrag', imp: 2, place: 'Paris', at: [2.3166, 48.8625], wiki: 'Schuman-Erklärung',
+    d: '1950-05-09', title: 'Schuman-Erklärung', cat: 'vertrag', imp: 2, place: 'Paris', at: [2.3166, 48.8625], wiki: 'Schuman-Erklärung', themes: ['deutsche-teilung'],
     text: `Der französische Außenminister Robert Schuman schlägt vor, die Kohle- und Stahlproduktion Frankreichs und Deutschlands einer gemeinsamen Behörde zu unterstellen. Daraus entsteht 1951 die Montanunion, der Kern der späteren Europäischen Union.`,
   },
   {
@@ -99,7 +99,7 @@ export default [
   },
   // 1951–1953
   {
-    d: '1951-04-18', title: 'Montanunion gegründet', cat: 'vertrag', imp: 2, place: 'Paris', at: [2.3522, 48.8566], wiki: 'Europäische Gemeinschaft für Kohle und Stahl',
+    d: '1951-04-18', title: 'Montanunion gegründet', cat: 'vertrag', imp: 2, place: 'Paris', at: [2.3522, 48.8566], wiki: 'Europäische Gemeinschaft für Kohle und Stahl', themes: ['deutsche-teilung'],
     text: `Frankreich, die Bundesrepublik, Italien und die Benelux-Staaten gründen die Europäische Gemeinschaft für Kohle und Stahl – sechs Jahre nach Kriegsende eine gemeinsame Institution der früheren Kriegsgegner.`,
   },
   {
@@ -107,11 +107,11 @@ export default [
     text: `Japan schließt Frieden mit 48 Staaten und verzichtet auf Korea, Taiwan, Süd-Sachalin und die Kurilen. Mit Inkrafttreten im April 1952 endet die Besatzung; Okinawa bleibt unter US-Verwaltung. Die Sowjetunion unterzeichnet nicht.`,
   },
   {
-    d: '1952-03-10', title: 'Stalin-Note', cat: 'politik', imp: 3, place: 'Moskau', at: [37.6175, 55.752], wiki: 'Stalin-Note',
+    d: '1952-03-10', title: 'Stalin-Note', cat: 'politik', imp: 3, place: 'Moskau', at: [37.6175, 55.752], wiki: 'Stalin-Note', themes: ['deutsche-teilung'],
     text: `Stalin bietet ein wiedervereinigtes, neutrales Deutschland an. Die Westmächte und die Bundesregierung lehnen ab, weil sie freie Wahlen unter internationaler Aufsicht für nicht gewährleistet halten. Ob das Angebot ernst gemeint war, ist bis heute umstritten.`,
   },
   {
-    d: '1952-05-26', title: 'DDR riegelt die innerdeutsche Grenze ab', cat: 'krise', imp: 2, place: 'Innerdeutsche Grenze', at: [10.4, 51.3], wiki: 'Innerdeutsche Grenze',
+    d: '1952-05-26', title: 'DDR riegelt die innerdeutsche Grenze ab', cat: 'krise', imp: 2, place: 'Innerdeutsche Grenze', at: [10.4, 51.3], wiki: 'Innerdeutsche Grenze', themes: ['deutsche-teilung'],
     text: `Die DDR errichtet entlang der Grenze zur Bundesrepublik eine fünf Kilometer breite Sperrzone. Tausende als unzuverlässig geltende Bewohnerinnen und Bewohner werden zwangsweise umgesiedelt. Offen bleibt nur noch die Sektorengrenze in Berlin.`,
   },
   {
@@ -123,7 +123,7 @@ export default [
     text: `Josef Stalin stirbt nach fast 30 Jahren an der Macht. Unter seinen Nachfolgern beginnt eine vorsichtige Entstalinisierung; Hunderttausende Häftlinge werden aus dem Gulag entlassen.`,
   },
   {
-    d: '1953-06-17', title: 'Volksaufstand in der DDR', cat: 'aufstand', imp: 1, place: 'Ost-Berlin', at: [13.3849, 52.5101], wiki: 'Volksaufstand vom 17. Juni 1953',
+    d: '1953-06-17', title: 'Volksaufstand in der DDR', cat: 'aufstand', imp: 1, place: 'Ost-Berlin', at: [13.3849, 52.5101], wiki: 'Volksaufstand vom 17. Juni 1953', themes: ['deutsche-teilung'],
     text: `Aus Protesten Ost-Berliner Bauarbeiter gegen erhöhte Arbeitsnormen wird ein Aufstand in über 700 Orten der DDR mit Forderungen nach freien Wahlen. Sowjetische Panzer schlagen ihn nieder; mindestens 55 Menschen sterben.`,
   },
   {
@@ -156,11 +156,11 @@ export default [
     text: `29 asiatische und afrikanische Staaten treffen sich ohne die Großmächte, verurteilen den Kolonialismus und fordern eine Politik jenseits der Blöcke. Die Konferenz ist ein Vorläufer der Bewegung der Blockfreien.`,
   },
   {
-    d: '1955-05-05', title: 'Pariser Verträge: Bundesrepublik souverän und in der NATO', cat: 'vertrag', imp: 2, place: 'Bonn', at: [7.0982, 50.7374], wiki: 'Pariser Verträge',
+    d: '1955-05-05', title: 'Pariser Verträge: Bundesrepublik souverän und in der NATO', cat: 'vertrag', imp: 2, place: 'Bonn', at: [7.0982, 50.7374], wiki: 'Pariser Verträge', themes: ['deutsche-teilung'],
     text: `Das Besatzungsstatut endet, die Bundesrepublik wird weitgehend souverän und tritt am 9. Mai der NATO bei. Im November werden die ersten Soldaten der Bundeswehr vereidigt.`,
   },
   {
-    d: '1955-05-14', title: 'Gründung des Warschauer Pakts', cat: 'vertrag', imp: 1, place: 'Warschau', at: [21.0122, 52.2297], wiki: 'Warschauer Pakt',
+    d: '1955-05-14', title: 'Gründung des Warschauer Pakts', cat: 'vertrag', imp: 1, place: 'Warschau', at: [21.0122, 52.2297], wiki: 'Warschauer Pakt', themes: ['deutsche-teilung'],
     text: `Die Sowjetunion und sieben Staaten Mittel- und Osteuropas, darunter die DDR, schließen ein Militärbündnis unter sowjetischer Führung. Es dient auch der Kontrolle der eigenen Mitglieder, wie 1956 in Ungarn und 1968 in der Tschechoslowakei.`,
   },
   {
@@ -168,7 +168,7 @@ export default [
     text: `Die vier Besatzungsmächte und Österreich unterzeichnen den Staatsvertrag. Österreich wird wieder souverän; die Truppen ziehen bis Oktober ab, und das Land erklärt seine immerwährende Neutralität.`,
   },
   {
-    d: '1955-09-13', title: 'Adenauer in Moskau: Rückkehr der letzten Kriegsgefangenen', cat: 'politik', imp: 3, place: 'Moskau', at: [37.6175, 55.752], wiki: 'Heimkehr der Zehntausend',
+    d: '1955-09-13', title: 'Adenauer in Moskau: Rückkehr der letzten Kriegsgefangenen', cat: 'politik', imp: 3, place: 'Moskau', at: [37.6175, 55.752], wiki: 'Heimkehr der Zehntausend', themes: ['deutsche-teilung'],
     text: `Die Bundesrepublik und die Sowjetunion nehmen diplomatische Beziehungen auf. Im Gegenzug kehren bis Anfang 1956 die letzten rund 10 000 deutschen Kriegsgefangenen und viele Zivilinternierte heim.`,
   },
   // 1956–1957
@@ -181,7 +181,7 @@ export default [
     text: `Eine Studentendemonstration wird zum landesweiten Aufstand. Ministerpräsident Imre Nagy kündigt den Austritt aus dem Warschauer Pakt an. Am 4. November schlagen sowjetische Truppen den Aufstand nieder; rund 2500 Ungarn sterben, etwa 200 000 fliehen in den Westen. Nagy wird 1958 hingerichtet.`,
   },
   {
-    d: '1956-10-29', end: '1956-11-07', title: 'Suezkrise', cat: 'krise', imp: 1, place: 'Port Said', at: [32.3019, 31.2653], wiki: 'Sueskrise', theme: 'nahost',
+    d: '1956-10-29', end: '1956-11-07', title: 'Suezkrise', cat: 'krise', imp: 1, place: 'Port Said', at: [32.3019, 31.2653], wiki: 'Sueskrise', themes: ['nahost'],
     text: `Nachdem Ägyptens Präsident Nasser den Suezkanal verstaatlicht hat, greifen Israel, Großbritannien und Frankreich an. Auf Druck der USA und der Sowjetunion müssen sie sich zurückziehen – ein Zeichen für das Ende der Weltmachtrolle der europäischen Kolonialmächte.`,
   },
   {
@@ -189,7 +189,7 @@ export default [
     text: `Als erste Kolonie südlich der Sahara wird die britische Goldküste unter Kwame Nkrumah als Ghana unabhängig. Sie wird zum Vorbild für die Unabhängigkeitsbewegungen in ganz Afrika.`,
   },
   {
-    d: '1957-03-25', title: 'Römische Verträge', cat: 'vertrag', imp: 1, place: 'Rom, Kapitol', at: [12.4823, 41.8933], wiki: 'Römische Verträge',
+    d: '1957-03-25', title: 'Römische Verträge', cat: 'vertrag', imp: 1, place: 'Rom, Kapitol', at: [12.4823, 41.8933], wiki: 'Römische Verträge', themes: ['deutsche-teilung'],
     text: `Die sechs Staaten der Montanunion gründen die Europäische Wirtschaftsgemeinschaft (EWG) und die Europäische Atomgemeinschaft. Ziel ist ein gemeinsamer Markt.`,
   },
   {
@@ -202,7 +202,7 @@ export default [
     text: `Mao Zedong will China durch Massenkampagnen in kurzer Zeit industrialisieren. Zwangskollektivierung, unrealistische Planvorgaben und Getreideexporte führen zur größten Hungersnot der Geschichte mit 15 bis 45 Millionen Toten.`,
   },
   {
-    d: '1958-11-27', title: 'Berlin-Ultimatum', cat: 'krise', imp: 2, place: 'Berlin', at: [13.4, 52.52], wiki: 'Berlin-Ultimatum',
+    d: '1958-11-27', title: 'Berlin-Ultimatum', cat: 'krise', imp: 2, place: 'Berlin', at: [13.4, 52.52], wiki: 'Berlin-Ultimatum', themes: ['deutsche-teilung'],
     text: `Chruschtschow fordert binnen sechs Monaten den Abzug der Westmächte aus West-Berlin und dessen Umwandlung in eine „Freie Stadt“. Die Westmächte lehnen ab; die Krise um Berlin schwelt bis zum Mauerbau.`,
   },
   {
@@ -235,7 +235,7 @@ export default [
     text: `Von der CIA ausgebildete Exilkubaner landen an der Südküste Kubas, um Castro zu stürzen. Die Invasion scheitert innerhalb von drei Tagen und treibt Kuba endgültig an die Seite der Sowjetunion.`,
   },
   {
-    d: '1961-08-13', title: 'Bau der Berliner Mauer', cat: 'krise', imp: 1, place: 'Berlin', at: [13.3777, 52.5163], wiki: 'Berliner Mauer',
+    d: '1961-08-13', title: 'Bau der Berliner Mauer', cat: 'krise', imp: 1, place: 'Berlin', at: [13.3777, 52.5163], wiki: 'Berliner Mauer', themes: ['deutsche-teilung'],
     text: `Um die Massenflucht in den Westen zu stoppen – seit 1949 hatten rund 2,7 Millionen Menschen die DDR verlassen –, riegeln Volkspolizei und Kampfgruppen die Sektorengrenze in Berlin ab. Aus Stacheldraht wird eine Mauer. Bis 1989 sterben an ihr mindestens 140 Menschen.`,
   },
   {
@@ -243,7 +243,7 @@ export default [
     text: `Auf Initiative von Tito, Nasser, Nehru, Sukarno und Nkrumah treffen sich 25 Staaten, die sich keinem der beiden Blöcke anschließen wollen.`,
   },
   {
-    d: '1961-10-27', title: 'Panzer am Checkpoint Charlie', cat: 'krise', imp: 3, place: 'Berlin, Checkpoint Charlie', at: [13.3904, 52.5075], wiki: 'Checkpoint Charlie',
+    d: '1961-10-27', title: 'Panzer am Checkpoint Charlie', cat: 'krise', imp: 3, place: 'Berlin, Checkpoint Charlie', at: [13.3904, 52.5075], wiki: 'Checkpoint Charlie', themes: ['deutsche-teilung'],
     text: `Nach Streit über Kontrollen alliierten Personals stehen sich amerikanische und sowjetische Panzer 16 Stunden lang auf kurze Distanz gegenüber, bevor beide Seiten zurückweichen.`,
   },
   {

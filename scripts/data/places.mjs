@@ -1,4 +1,4 @@
-// Städte der Schwerpunktregion Nahost (Beschriftung ab mittlerer Zoomstufe).
+// Städte der Schwerpunktregionen Nahost und Deutschland (Beschriftung ab mittlerer Zoomstufe).
 // r: Rang (1 = Hauptstadt/Großstadt … 3 = kleinere Stadt), s/e: gültig von/bis (optional)
 export const PLACES = [
   // Israel und Palästina
@@ -43,4 +43,29 @@ export const PLACES = [
   { n: 'Suez', at: [32.5498, 29.9668], r: 2 },
   { n: 'El Arisch', at: [33.8031, 31.1316], r: 3 },
   { n: 'Scharm el-Scheich', at: [34.3299, 27.9158], r: 3 },
+  // Deutschland: Hauptstädte, Großstädte und Städte, die in den Ereignissen der Teilung vorkommen
+  { n: 'Berlin', at: [13.405, 52.52], r: 1 },
+  { n: 'Hamburg', at: [9.9937, 53.5511], r: 1 },
+  { n: 'München', at: [11.582, 48.1351], r: 1 },
+  { n: 'Bonn', at: [7.0982, 50.7374], r: 2 },
+  { n: 'Köln', at: [6.9603, 50.9375], r: 2 },
+  { n: 'Frankfurt am Main', at: [8.6821, 50.1109], r: 2 },
+  { n: 'Stuttgart', at: [9.1829, 48.7758], r: 2 },
+  { n: 'Hannover', at: [9.732, 52.3759], r: 2 },
+  { n: 'Leipzig', at: [12.3731, 51.3397], r: 2 },
+  { n: 'Dresden', at: [13.7373, 51.0504], r: 2 },
+  { n: 'Düsseldorf', at: [6.7735, 51.2277], r: 3 },
+  { n: 'Nürnberg', at: [11.0767, 49.4521], r: 3 },
+  { n: 'Bremen', at: [8.8017, 53.0793], r: 3 },
+  { n: 'Kiel', at: [10.1228, 54.3233], r: 3 },
+  { n: 'Saarbrücken', at: [6.9969, 49.2402], r: 3 },
+  { n: 'Potsdam', at: [13.0645, 52.3906], r: 3 },
+  { n: 'Rostock', at: [12.14, 54.0924], r: 3 },
+  { n: 'Schwerin', at: [11.4125, 53.6355], r: 3 },
+  { n: 'Magdeburg', at: [11.6276, 52.1205], r: 3 },
+  { n: 'Halle', at: [11.9697, 51.4825], r: 3 },
+  { n: 'Erfurt', at: [11.0299, 50.9848], r: 3 },
+  { n: 'Chemnitz', at: [12.9214, 50.8278], r: 3, e: '1953-05-09' },
+  { n: 'Karl-Marx-Stadt', at: [12.9214, 50.8278], r: 3, s: '1953-05-10', e: '1990-05-31' },
+  { n: 'Chemnitz', at: [12.9214, 50.8278], r: 3, s: '1990-06-01' },
 ];

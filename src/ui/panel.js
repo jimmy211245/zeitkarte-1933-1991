@@ -2,12 +2,9 @@
 import { state, set, subscribe } from '../state.js';
 import { CATEGORIES, CHANGE_TYPES } from '../data/categories.js';
 import { formatShortPrecision, formatPrecision, parts } from '../lib/dates.js';
+import { getTheme, itemHasTheme, matchesTheme, themesOf } from '../data/themes.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
-
-export const THEME_NAMES = { nahost: 'Nahostkonflikt' };
-// Ausschnitt [West, Süd, Ost, Nord] für Gebietsänderungen und die Kartenansicht eines Themas
-export const THEME_REGIONS = { nahost: [29, 27, 37, 34.8] };
 
 export function createPanel({ events, changes, onFocus }) {
   const listEl = document.getElementById('items');
@@ -18,10 +15,20 @@ export function createPanel({ events, changes, onFocus }) {
   const panel = document.getElementById('panel');
   const head = document.getElementById('sheet-head');
   const peekEl = document.getElementById('peek');
-  document.getElementById('count-events').textContent = events.length;
-  document.getElementById('count-changes').textContent = changes.length;
+  const countEls = [[document.getElementById('count-events'), events], [document.getElementById('count-changes'), changes]];
+
+  // Tab-Zähler: mit Schwerpunkt nur dessen Einträge (der Tooltip nennt die Gesamtzahl)
+  function renderCounts() {
+    for (const [el, list] of countEls) {
+      const n = list.filter((it) => matchesTheme(it, state.theme)).length;
+      el.textContent = n;
+      el.parentElement.title = state.theme ? `${n} von ${list.length}` : '';
+    }
+  }
 
   const byId = { event: new Map(events.map((e) => [e.id, e])), change: new Map(changes.map((c) => [c.id, c])) };
+  // Position in der zeitlich sortierten Gesamtliste
+  const rank = { event: new Map(events.map((e, i) => [e.id, i])), change: new Map(changes.map((c, i) => [c.id, i])) };
   let visible = [];
   let rows = [];
   let lastCurrent = null;
@@ -128,36 +135,33 @@ export function createPanel({ events, changes, onFocus }) {
 
   const norm = (s) => s.toLocaleLowerCase('de').normalize('NFD').replace(/[̀-ͯ]/g, '');
 
-  // Schwerpunktthema: Ereignisse mit passendem Thema, Gebietsänderungen in der Region
-  const inTheme = (it, kind) => {
-    if (!state.theme) return true;
-    if (kind === 'event') return it.theme === state.theme;
-    const [w, s, e, n] = it.bbox, [rw, rs, re, rn] = THEME_REGIONS[state.theme];
-    return !(e < rw || w > re || n < rs || s > rn);
-  };
   const themeBanner = document.getElementById('theme-banner');
   function renderThemeBanner() {
-    themeBanner.hidden = !state.theme;
-    if (!state.theme) return;
-    const nEvents = events.filter((e) => inTheme(e, 'event')).length;
-    const nChanges = changes.filter((c) => inTheme(c, 'change')).length;
-    themeBanner.innerHTML = `<span><b>Schwerpunkt ${esc(THEME_NAMES[state.theme])}</b> · ${nEvents} Ereignisse · ${nChanges} Gebietsänderungen</span><button type="button" data-act="theme-off" title="Schwerpunkt aufheben"><svg><use href="#i-close"/></svg></button>`;
+    const theme = getTheme(state.theme);
+    themeBanner.hidden = !theme;
+    if (!theme) return;
+    const nEvents = events.filter((e) => itemHasTheme(e, theme.id)).length;
+    const nChanges = changes.filter((c) => itemHasTheme(c, theme.id)).length;
+    themeBanner.innerHTML = `<span><b>Schwerpunkt ${esc(theme.name)}</b> · ${nEvents} Ereignisse · ${nChanges} Gebietsänderungen</span><button type="button" data-act="theme-off" title="Schwerpunkt aufheben"><svg><use href="#i-close"/></svg></button>`;
   }
   themeBanner.addEventListener('click', (e) => {
     if (e.target.closest('[data-act="theme-off"]')) set({ theme: null });
   });
 
+  // Einträge in Listenreihenfolge, die zum aktuellen Kontext gehören: Schwerpunkt und Kategorie-Filter.
+  // Liste und Vor/Zurück der Detailansicht nutzen sie gemeinsam; die Suche gilt nur für die Liste.
+  function navigationItems(kind) {
+    const list = kind === 'event' ? events : changes;
+    // Kategorien gehören zum gerade offenen Tab (Ereignisse oder Gebietsänderungen)
+    const cats = (kind === 'event') === (state.tab === 'events') ? state.categories : null;
+    return list.filter((it) => matchesTheme(it, state.theme) && (!cats || cats.has(kind === 'event' ? it.cat : it.type)));
+  }
+
   function filterItems() {
     const q = norm(state.query);
-    const source = state.tab === 'events' ? events : changes;
-    const kind = state.tab === 'events' ? 'event' : 'change';
-    return source.filter((it) => {
-      const cat = state.tab === 'events' ? it.cat : it.type;
-      if (!inTheme(it, kind)) return false;
-      if (state.categories && !state.categories.has(cat)) return false;
-      if (!q) return true;
-      return norm(`${it.title} ${it.place ?? ''} ${it.text ?? ''} ${it.to ?? ''} ${it.from ?? ''}`).includes(q);
-    });
+    const items = navigationItems(state.tab === 'events' ? 'event' : 'change');
+    if (!q) return items;
+    return items.filter((it) => norm(`${it.title} ${it.place ?? ''} ${it.text ?? ''} ${it.to ?? ''} ${it.from ?? ''}`).includes(q));
   }
 
   function renderList() {
@@ -240,9 +244,10 @@ export function createPanel({ events, changes, onFocus }) {
     }
     const it = byId[sel.kind].get(sel.id);
     if (!it) return;
-    const list = sel.kind === 'event' ? events : changes;
-    const i = list.indexOf(it);
-    const prev = list[i - 1], next = list[i + 1];
+    // Nachbarn nach Position in der Gesamtliste, auch wenn der Eintrag selbst nicht zur Auswahl zählt
+    const nav = navigationItems(sel.kind);
+    const pos = rank[sel.kind].get(it.id);
+    const prev = nav.findLast((x) => rank[sel.kind].get(x.id) < pos), next = nav.find((x) => rank[sel.kind].get(x.id) > pos);
     let body = '';
     if (sel.kind === 'event') {
       const c = CATEGORIES[it.cat];
@@ -252,7 +257,7 @@ export function createPanel({ events, changes, onFocus }) {
         ? `https://de.wikipedia.org/w/index.php?search=${encodeURIComponent(it.wiki)}&title=Spezial%3ASuche&go=Artikel`
         : null;
       body = `
-        <div class="detail-kicker"><span class="cat"><i style="background:${c?.color}"></i>${esc(c?.name)}</span>${it.theme ? `<span class="theme-tag">${esc(THEME_NAMES[it.theme])}</span>` : ''}</div>
+        <div class="detail-kicker"><span class="cat"><i style="background:${c?.color}"></i>${esc(c?.name)}</span>${themesOf(it).map((t) => `<span class="theme-tag">${esc(t.name)}</span>`).join('')}</div>
         <div class="detail-date">${esc(date)}</div>
         <h2 class="detail-title">${esc(it.title)}</h2>
         ${it.place ? `<div class="detail-place"><svg><use href="#i-pin"/></svg>${esc(it.place)}</div>` : ''}
@@ -311,7 +316,10 @@ export function createPanel({ events, changes, onFocus }) {
       searchEl.placeholder = s.tab === 'events' ? 'Suchen, z. B. Stalingrad' : 'Suchen, z. B. Sudetenland';
     }
     if (changed.includes('tab') || changed.includes('categories')) renderChips();
-    if (changed.includes('theme')) renderThemeBanner();
+    if (changed.includes('theme')) {
+      renderThemeBanner();
+      renderCounts();
+    }
     if (changed.some((k) => ['tab', 'query', 'categories', 'theme'].includes(k))) renderList();
     if (changed.includes('selection')) {
       renderDetail();
@@ -330,6 +338,7 @@ export function createPanel({ events, changes, onFocus }) {
 
   renderChips();
   renderThemeBanner();
+  renderCounts();
   renderList();
   setSheet(false);
   return {

@@ -9,7 +9,10 @@ import { state, set, subscribe } from './state.js';
 import { START, END, toYmd, toIso, fromIso, formatDayMonth, yearOf, addMonths } from './lib/dates.js';
 import { createTimeline } from './ui/timeline.js';
 import { topoToGeoJSON } from './lib/topojson.js';
-import { createPanel, THEME_REGIONS } from './ui/panel.js';
+import { createPanel } from './ui/panel.js';
+import { getTheme, matchesTheme } from './data/themes.js';
+import { createThemeMenu } from './ui/themeMenu.js';
+import { setupMenu } from './ui/menu.js';
 import { renderLegend, setBlocLegend, setPlanLegend } from './ui/legend.js';
 import { createTimeEngine } from './map/timeengine.js';
 import { setupAbout } from './ui/about.js';
@@ -27,11 +30,9 @@ function viewFromHash(h) {
 const hash = location.hash.slice(1).split('/');
 if (/^\d{4}-\d{2}-\d{2}$/.test(hash[0] ?? '')) state.day = Math.max(START, Math.min(END, fromIso(hash[0])));
 const initialView = viewFromHash(hash) ?? { zoom: 3.6, center: [15, 50] };
-// Schwerpunktthema per Link (?thema=nahost); nur eigene Schlüssel, nicht z. B. „toString“
-const themeParam = new URLSearchParams(location.search).get('thema');
-if (themeParam && Object.hasOwn(THEME_REGIONS, themeParam)) state.theme = themeParam;
-// Kartenausschnitt beim Einschalten eines Schwerpunkts [[West, Süd], [Ost, Nord]]
-const THEME_VIEW = { nahost: [[31.6, 29.4], [37.2, 34.0]] };
+// Schwerpunktthema per Link (?thema=<Theme-ID>); unbekannte IDs werden ignoriert
+const urlTheme = getTheme(new URLSearchParams(location.search).get('thema'));
+if (urlTheme) state.theme = urlTheme.id;
 
 const map = new maplibregl.Map({
   container: 'map',
@@ -133,11 +134,9 @@ const timeline = createTimeline({
 });
 // Zeitband: Marken außerhalb des Schwerpunktthemas abgeschwächt
 function setTimelineMarkers() {
-  const region = state.theme ? THEME_REGIONS[state.theme] : null;
-  const inRegion = (b) => !region || !(b[2] < region[0] || b[0] > region[2] || b[3] < region[1] || b[1] > region[3]);
   timeline.setMarkers(
-    events.map((e) => ({ id: e.id, t: e.t, prec: e.prec, cat: e.cat, imp: e.imp, title: e.title, dim: !!state.theme && e.theme !== state.theme })),
-    changes.map((c) => ({ id: c.id, t: c.t, imp: c.imp, title: c.title, dim: !inRegion(c.bbox) })),
+    events.map((e) => ({ id: e.id, t: e.t, prec: e.prec, cat: e.cat, imp: e.imp, title: e.title, dim: !matchesTheme(e, state.theme) })),
+    changes.map((c) => ({ id: c.id, t: c.t, imp: c.imp, title: c.title, dim: !matchesTheme(c, state.theme) })),
   );
 }
 setTimelineMarkers();
@@ -180,7 +179,11 @@ map.on('load', async () => {
   });
   ready = true;
   syncMap(state, ['day', 'selection', 'layers', 'mode', 'theme']);
-  map.once('idle', () => (document.getElementById('loading').hidden = true));
+  map.once('idle', () => {
+    document.getElementById('loading').hidden = true;
+    // Link mit Schwerpunkt, aber ohne Ausschnitt im Fragment: auf dessen Region ausrichten
+    if (urlTheme && !viewFromHash(hash)) showTheme(urlTheme, { duration: 0 });
+  });
 });
 
 let shownPlan = null;
@@ -245,7 +248,7 @@ document.getElementById('speed').addEventListener('change', (e) => set({ speed: 
 
 function jumpEvent(dir) {
   // mit Schwerpunkt nur zwischen dessen Ereignissen springen
-  const list = state.theme ? events.filter((e) => e.theme === state.theme) : events;
+  const list = state.theme ? events.filter((e) => matchesTheme(e, state.theme)) : events;
   let target = null;
   if (dir > 0) target = list.find((e) => e.t > state.day);
   else for (let i = list.length - 1; i >= 0; i--) if (list[i].t < state.day) { target = list[i]; break; }
@@ -292,40 +295,32 @@ window.addEventListener('keydown', (e) => {
 
 // --- Kopfzeile: Ansicht, Schwerpunkt und Ebenen -----------------------------------------------
 document.querySelectorAll('.seg [data-mode]').forEach((b) => b.addEventListener('click', () => set({ mode: b.dataset.mode })));
-const themeBtn = document.getElementById('theme-btn');
-themeBtn.addEventListener('click', () => {
-  const theme = state.theme ? null : 'nahost';
-  set({ theme, selection: null });
-  // beim Einschalten in die Region zoomen, sofern sie nicht schon im Blick ist
-  if (theme && ready) {
-    const [[w, s], [e, n]] = THEME_VIEW[theme];
-    const c = map.getCenter();
-    const inView = map.getZoom() >= 5 && c.lng > w && c.lng < e && c.lat > s && c.lat < n;
-    const inset = mapInset();
-    if (!inView) map.fitBounds(THEME_VIEW[theme], { padding: { top: inset.top, bottom: inset.bottom, left: inset.left, right: 40 }, duration: 1400, essential: true });
-  }
+// Karte auf den Ausschnitt eines Schwerpunkts ausrichten, sofern er nicht schon im Blick ist
+function showTheme(theme, { duration = 1400 } = {}) {
+  if (!theme || !ready) return;
+  const [[w, s], [e, n]] = theme.viewBounds;
+  const c = map.getCenter();
+  const inView = map.getZoom() >= 5 && c.lng > w && c.lng < e && c.lat > s && c.lat < n;
+  const inset = mapInset();
+  if (!inView) map.fitBounds(theme.viewBounds, { padding: { top: inset.top, bottom: inset.bottom, left: inset.left, right: 40 }, duration, essential: true });
+}
+createThemeMenu({
+  button: document.getElementById('theme-btn'),
+  menu: document.getElementById('theme-menu'),
+  events,
+  changes,
+  onSelect: showTheme,
 });
-function renderThemeButton() {
-  themeBtn.setAttribute('aria-pressed', String(!!state.theme));
-  // Thema in der Adresse festhalten (?thema=nahost), Datum und Ausschnitt bleiben im Fragment
+function renderThemeUrl() {
+  // Thema in der Adresse festhalten (?thema=<Theme-ID>), Datum und Ausschnitt bleiben im Fragment
   const url = new URL(location.href);
   if (state.theme) url.searchParams.set('thema', state.theme);
   else url.searchParams.delete('thema');
   history.replaceState(null, '', url);
 }
-renderThemeButton();
-const layersBtn = document.getElementById('layers-btn');
+renderThemeUrl();
 const layersMenu = document.getElementById('layers-menu');
-layersBtn.addEventListener('click', () => {
-  layersMenu.hidden = !layersMenu.hidden;
-  layersBtn.setAttribute('aria-expanded', String(!layersMenu.hidden));
-});
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.menu-wrap')) {
-    layersMenu.hidden = true;
-    layersBtn.setAttribute('aria-expanded', 'false');
-  }
-});
+setupMenu(document.getElementById('layers-btn'), layersMenu);
 layersMenu.addEventListener('change', (e) => {
   const key = e.target.dataset.layer;
   if (key) set({ layers: { ...state.layers, [key]: e.target.checked } });
@@ -367,7 +362,7 @@ subscribe((s, changed) => {
     document.querySelectorAll('.seg [data-mode]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.mode === s.mode)));
   }
   if (changed.includes('theme')) {
-    renderThemeButton();
+    renderThemeUrl();
     setTimelineMarkers();
   }
 });

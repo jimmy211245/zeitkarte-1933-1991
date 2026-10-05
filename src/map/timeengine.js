@@ -7,6 +7,7 @@
 // Datum tatsächlich ändert (Binärsuche über alle Zeitgrenzen).
 import { toDay, toYmd } from '../lib/dates.js';
 import { blocOf, BLOCS, BLOC_BREAKS } from '../data/blocs.js';
+import { matchesTheme } from '../data/themes.js';
 
 const SOVEREIGN = new Set(['ind', 'unrec', 'pup']);
 
@@ -116,7 +117,7 @@ export function createTimeEngine(map, { states, labels, fronts, admin, events, c
     for (const it of eventItems) {
       const age = day - it.te;
       const sel = it.id === selectedEvent;
-      const offTheme = theme && it.ev.theme !== theme;
+      const offTheme = !matchesTheme(it.ev, theme);
       let f = 0;
       if (sel) f = 1;
       else if (!offTheme && it.t <= day && age <= WINDOW[it.imp]) f = age <= 0 ? 1 : Math.max(0.12, 1 - (0.88 * age) / WINDOW[it.imp]);

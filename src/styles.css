@@ -57,7 +57,7 @@ svg { width: 18px; height: 18px; flex: none; }
   align-items: center;
   gap: 10px;
   pointer-events: none;
-  z-index: 3;
+  z-index: 4; /* über der Legende (3), damit die Menüs sie überdecken */
 }
 .masthead > * { pointer-events: auto; }
 .brand {
@@ -105,7 +105,7 @@ svg { width: 18px; height: 18px; flex: none; }
 }
 .icon-btn:hover { background: #fff; }
 
-/* Schwerpunkt-Schalter: eingeschaltet in Signalrot */
+/* Schwerpunkt-Auswahl: mit aktivem Schwerpunkt in Signalrot */
 .theme-btn {
   display: inline-flex;
   align-items: center;
@@ -120,10 +120,12 @@ svg { width: 18px; height: 18px; flex: none; }
   white-space: nowrap;
 }
 .theme-btn svg { width: 16px; height: 16px; color: var(--signal); }
+.theme-btn .chev { width: 14px; height: 14px; margin-right: -3px; color: var(--ink-2); }
+.theme-btn .long, .theme-btn .short { max-width: 120px; overflow: hidden; text-overflow: ellipsis; } /* lange Themennamen kürzen */
 .theme-btn .short { display: none; }
 .theme-btn:hover { background: #fff; }
-.theme-btn[aria-pressed='true'] { background: var(--signal); border-color: var(--signal); color: #fff; }
-.theme-btn[aria-pressed='true'] svg { color: #fff; }
+.theme-btn.active { background: var(--signal); border-color: var(--signal); color: #fff; }
+.theme-btn.active svg { color: #fff; }
 .menu-wrap { position: relative; }
 .menu {
   position: absolute;
@@ -139,6 +141,11 @@ svg { width: 18px; height: 18px; flex: none; }
 }
 .menu label { display: flex; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 4px; cursor: pointer; font-size: 13px; }
 .menu label:hover { background: var(--paper-2); }
+.theme-menu { min-width: 300px; max-width: calc(100vw - 16px); }
+.theme-menu label { align-items: flex-start; }
+.theme-menu input { margin-top: 3px; }
+.theme-menu b { font-weight: 500; display: block; }
+.theme-menu small { display: block; font-size: 11.5px; color: var(--ink-2); line-height: 1.35; }
 
 /* --- Seitenleiste ------------------------------------------------------------------------ */
 #panel {
@@ -404,16 +411,16 @@ svg { width: 18px; height: 18px; flex: none; }
 /* Maßstab rechts neben der Seitenleiste statt darunter */
 .maplibregl-ctrl-bottom-left { left: calc(var(--panel-w) + 12px); }
 
-/* mittlere Breiten: Knöpfe der Kopfzeile ohne Beschriftung, damit alles in eine Zeile passt */
 /* mittlere Breiten: Kopfzeile zweizeilig (oben Titel und Knöpfe, darunter Ansicht und Schwerpunkt),
-   Knöpfe ohne Beschriftung – sonst stößt sie an die Zoomknöpfe */
-@media (max-width: 1080px) {
+   Knöpfe ohne Beschriftung – sonst stößt sie an die Zoomknöpfe. Einzeilig endet die Kopfzeile mit dem
+   längsten Schwerpunktnamen bei rund 1100 px, die Zoomknöpfe beginnen 40 px vor dem rechten Rand. */
+@media (max-width: 1180px) {
   .masthead { display: grid; grid-template-columns: 1fr auto auto; justify-items: start; gap: 6px; }
   .brand { margin: 0; }
-  .menu-wrap { grid-area: 1 / 2; }
+  #layers-wrap { grid-area: 1 / 2; }
   #about-btn { grid-area: 1 / 3; }
   .seg { grid-area: 2 / 1; }
-  .theme-btn { grid-area: 2 / 2 / 3 / 4; justify-self: end; }
+  .theme-wrap { grid-area: 2 / 2 / 3 / 4; justify-self: end; }
   .menu { left: auto; right: 0; }
   .icon-btn span { display: none; }
   .theme-btn .long { display: none; }

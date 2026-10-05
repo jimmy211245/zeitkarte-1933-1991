@@ -219,7 +219,7 @@ export function buildStyle(dataUrl, startYmd) {
         'text-font': ['Noto Sans Italic'],
         'text-size': ['interpolate', ['linear'], ['zoom'], 2.4, ['match', ['get', 'r'], [1, 2], 10, 8.5], 6, 12.5],
       }, { 'text-color': '#3c434c' }),
-      // Städte (nur Nahost) unter den Namen besetzter oder annektierter Gebiete, große vor kleinen
+      // Städte der Schwerpunktregionen unter den Namen besetzter oder annektierter Gebiete, große vor kleinen
       ...[[3, 7], [2, 6], [1, 5]].map(([r, minzoom]) => placeLayer(r, minzoom)),
       labelLayer('labels-region', ['==', ['get', 'k'], 'region'], 3.2, {
         'text-font': ['Noto Sans Italic'],

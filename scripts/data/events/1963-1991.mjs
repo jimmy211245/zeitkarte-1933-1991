@@ -2,11 +2,11 @@
 export default [
   // 1963–1966
   {
-    d: '1963-01-22', title: 'Élysée-Vertrag', cat: 'vertrag', imp: 2, place: 'Paris, Élysée-Palast', at: [2.3166, 48.8704], wiki: 'Élysée-Vertrag',
+    d: '1963-01-22', title: 'Élysée-Vertrag', cat: 'vertrag', imp: 2, place: 'Paris, Élysée-Palast', at: [2.3166, 48.8704], wiki: 'Élysée-Vertrag', themes: ['deutsche-teilung'],
     text: `Konrad Adenauer und Charles de Gaulle besiegeln die deutsch-französische Aussöhnung mit regelmäßigen Regierungskonsultationen und einem Jugendaustausch.`,
   },
   {
-    d: '1963-06-26', title: 'Kennedy in Berlin: „Ich bin ein Berliner“', cat: 'politik', imp: 2, place: 'Berlin, Rathaus Schöneberg', at: [13.3443, 52.4846], wiki: 'Ich bin ein Berliner',
+    d: '1963-06-26', title: 'Kennedy in Berlin: „Ich bin ein Berliner“', cat: 'politik', imp: 2, place: 'Berlin, Rathaus Schöneberg', at: [13.3443, 52.4846], wiki: 'Ich bin ein Berliner', themes: ['deutsche-teilung'],
     text: `Vor rund 450 000 Menschen bekräftigt US-Präsident John F. Kennedy die Solidarität der USA mit West-Berlin.`,
   },
   {
@@ -47,7 +47,7 @@ export default [
     text: `Bei einer Demonstration gegen den Besuch des Schahs von Persien erschießt ein Polizist den Studenten Benno Ohnesorg. Die Studentenbewegung in der Bundesrepublik radikalisiert sich.`,
   },
   {
-    d: '1967-06-05', end: '1967-06-10', title: 'Sechstagekrieg', cat: 'krieg', imp: 1, place: 'Jerusalem', at: [35.23, 31.78], wiki: 'Sechstagekrieg', theme: 'nahost',
+    d: '1967-06-05', end: '1967-06-10', title: 'Sechstagekrieg', cat: 'krieg', imp: 1, place: 'Jerusalem', at: [35.23, 31.78], wiki: 'Sechstagekrieg', themes: ['nahost'],
     text: `Israel kommt einem befürchteten Angriff zuvor und besiegt Ägypten, Jordanien und Syrien. Es besetzt den Sinai, den Gazastreifen, das Westjordanland mit Ost-Jerusalem und die Golanhöhen. Die besetzten Gebiete prägen den Nahostkonflikt bis heute.`,
   },
   {
@@ -87,16 +87,16 @@ export default [
     text: `Neil Armstrong und Buzz Aldrin betreten als erste Menschen den Mond. Rund 600 Millionen Menschen verfolgen die Übertragung. Die USA haben den Wettlauf zum Mond gewonnen.`,
   },
   {
-    d: '1969-10-21', title: 'Willy Brandt wird Bundeskanzler – Neue Ostpolitik', cat: 'politik', imp: 2, place: 'Bonn', at: [7.0982, 50.7374], wiki: 'Neue Ostpolitik',
+    d: '1969-10-21', title: 'Willy Brandt wird Bundeskanzler – Neue Ostpolitik', cat: 'politik', imp: 2, place: 'Bonn', at: [7.0982, 50.7374], wiki: 'Neue Ostpolitik', themes: ['deutsche-teilung'],
     text: `Die sozialliberale Koalition unter Willy Brandt setzt auf „Wandel durch Annäherung“: Verträge mit der Sowjetunion, Polen, der Tschechoslowakei und der DDR erkennen die bestehenden Grenzen faktisch an.`,
   },
   // 1970–1975
   {
-    d: '1970-08-12', title: 'Moskauer Vertrag', cat: 'vertrag', imp: 2, place: 'Moskau', at: [37.6175, 55.752], wiki: 'Moskauer Vertrag',
+    d: '1970-08-12', title: 'Moskauer Vertrag', cat: 'vertrag', imp: 2, place: 'Moskau', at: [37.6175, 55.752], wiki: 'Moskauer Vertrag', themes: ['deutsche-teilung'],
     text: `Die Bundesrepublik und die Sowjetunion verzichten auf Gewalt und erklären die bestehenden Grenzen in Europa, einschließlich der Oder-Neiße-Linie und der innerdeutschen Grenze, für unverletzlich.`,
   },
   {
-    d: '1970-12-07', title: 'Warschauer Vertrag und Kniefall von Warschau', cat: 'vertrag', imp: 1, place: 'Warschau, Ehrenmal für die Helden des Ghettos', at: [20.9935, 52.2495], wiki: 'Kniefall von Warschau',
+    d: '1970-12-07', title: 'Warschauer Vertrag und Kniefall von Warschau', cat: 'vertrag', imp: 1, place: 'Warschau, Ehrenmal für die Helden des Ghettos', at: [20.9935, 52.2495], wiki: 'Kniefall von Warschau', themes: ['deutsche-teilung'],
     text: `Die Bundesrepublik erkennt die Oder-Neiße-Linie als Westgrenze Polens an. Vor dem Denkmal für den Aufstand im Warschauer Ghetto kniet Willy Brandt nieder – eine Geste, die um die Welt geht.`,
   },
   {
@@ -108,7 +108,7 @@ export default [
     text: `Die pakistanische Armee geht brutal gegen die Unabhängigkeitsbewegung in Ostpakistan vor; Hunderttausende sterben, Millionen fliehen nach Indien. Nach dem Eingreifen Indiens kapituliert Pakistan, Bangladesch wird unabhängig.`,
   },
   {
-    d: '1971-09-03', title: 'Viermächteabkommen über Berlin', cat: 'vertrag', imp: 2, place: 'Berlin, Kontrollratsgebäude', at: [13.3504, 52.4934], wiki: 'Viermächteabkommen über Berlin',
+    d: '1971-09-03', title: 'Viermächteabkommen über Berlin', cat: 'vertrag', imp: 2, place: 'Berlin, Kontrollratsgebäude', at: [13.3504, 52.4934], wiki: 'Viermächteabkommen über Berlin', themes: ['deutsche-teilung'],
     text: `Die vier Siegermächte sichern den Transitverkehr zwischen der Bundesrepublik und West-Berlin und regeln Besuchsmöglichkeiten. Die Berlin-Krisen sind damit beendet.`,
   },
   {
@@ -124,11 +124,11 @@ export default [
     text: `Nixon und Breschnew begrenzen erstmals die Zahl strategischer Raketen und Raketenabwehrsysteme. Die Entspannungspolitik erreicht ihren Höhepunkt.`,
   },
   {
-    d: '1972-09-05', title: 'Olympia-Attentat in München', cat: 'krieg', imp: 2, place: 'München, Olympisches Dorf', at: [11.552, 48.1785], wiki: 'Olympia-Attentat München', theme: 'nahost',
+    d: '1972-09-05', title: 'Olympia-Attentat in München', cat: 'krieg', imp: 2, place: 'München, Olympisches Dorf', at: [11.552, 48.1785], wiki: 'Olympia-Attentat München', themes: ['nahost'],
     text: `Palästinensische Terroristen der Gruppe „Schwarzer September“ nehmen israelische Sportler als Geiseln. Zwei werden im Olympischen Dorf ermordet, neun weitere sterben beim gescheiterten Befreiungsversuch in Fürstenfeldbruck.`,
   },
   {
-    d: '1972-12-21', title: 'Grundlagenvertrag zwischen Bundesrepublik und DDR', cat: 'vertrag', imp: 2, place: 'Ost-Berlin', at: [13.4, 52.52], wiki: 'Grundlagenvertrag',
+    d: '1972-12-21', title: 'Grundlagenvertrag zwischen Bundesrepublik und DDR', cat: 'vertrag', imp: 2, place: 'Ost-Berlin', at: [13.4, 52.52], wiki: 'Grundlagenvertrag', themes: ['deutsche-teilung'],
     text: `Beide deutschen Staaten vereinbaren „gutnachbarliche Beziehungen“ und tauschen Ständige Vertretungen aus. 1973 werden beide Mitglied der Vereinten Nationen.`,
   },
   {
@@ -140,7 +140,7 @@ export default [
     text: `Das Militär unter General Augusto Pinochet stürzt den gewählten sozialistischen Präsidenten Salvador Allende, der beim Sturm auf den Präsidentenpalast stirbt. Die USA hatten die Destabilisierung der Regierung unterstützt. Es folgt eine Diktatur bis 1990.`,
   },
   {
-    d: '1973-10-06', end: '1973-10-25', title: 'Jom-Kippur-Krieg und Ölkrise', cat: 'krieg', imp: 1, place: 'Suezkanal und Golanhöhen', at: [32.55, 30.3], wiki: 'Jom-Kippur-Krieg', theme: 'nahost',
+    d: '1973-10-06', end: '1973-10-25', title: 'Jom-Kippur-Krieg und Ölkrise', cat: 'krieg', imp: 1, place: 'Suezkanal und Golanhöhen', at: [32.55, 30.3], wiki: 'Jom-Kippur-Krieg', themes: ['nahost'],
     text: `Ägypten und Syrien greifen Israel am höchsten jüdischen Feiertag an. Israel wendet nach anfänglichen Rückschlägen das Blatt. Die arabischen Ölstaaten drosseln die Förderung; in der Bundesrepublik gibt es autofreie Sonntage.`,
   },
   {
@@ -160,7 +160,7 @@ export default [
     text: `Nordvietnamesische Panzer rollen in Saigon ein; die letzten Amerikaner werden per Hubschrauber evakuiert. Vietnam wird 1976 unter kommunistischer Führung vereinigt.`,
   },
   {
-    d: '1975-08-01', title: 'KSZE-Schlussakte von Helsinki', cat: 'vertrag', imp: 1, place: 'Helsinki, Finlandia-Halle', at: [24.9343, 60.1757], wiki: 'KSZE-Schlussakte',
+    d: '1975-08-01', title: 'KSZE-Schlussakte von Helsinki', cat: 'vertrag', imp: 1, place: 'Helsinki, Finlandia-Halle', at: [24.9343, 60.1757], wiki: 'KSZE-Schlussakte', themes: ['deutsche-teilung'],
     text: `35 Staaten aus Ost und West bekennen sich zur Unverletzlichkeit der Grenzen, aber auch zu Menschenrechten und Grundfreiheiten. Oppositionsgruppen wie die Charta 77 berufen sich später auf die Schlussakte.`,
   },
   {
@@ -185,7 +185,7 @@ export default [
     text: `Nach der Entführung von Arbeitgeberpräsident Hanns Martin Schleyer durch die RAF und der Entführung der Lufthansa-Maschine „Landshut“ befreit die GSG 9 in Mogadischu die Geiseln. Die inhaftierten RAF-Führer begehen in Stammheim Selbstmord, Schleyer wird ermordet.`,
   },
   {
-    d: '1978-09-17', title: 'Abkommen von Camp David', cat: 'vertrag', imp: 2, place: 'Camp David', at: [-77.4647, 39.6481], wiki: 'Camp-David-Abkommen', theme: 'nahost',
+    d: '1978-09-17', title: 'Abkommen von Camp David', cat: 'vertrag', imp: 2, place: 'Camp David', at: [-77.4647, 39.6481], wiki: 'Camp-David-Abkommen', themes: ['nahost'],
     text: `Unter Vermittlung von US-Präsident Jimmy Carter einigen sich Anwar as-Sadat und Menachem Begin auf einen Rahmen für den Frieden. 1979 folgt der Friedensvertrag; Israel gibt den Sinai bis 1982 zurück.`,
   },
   {
@@ -201,7 +201,7 @@ export default [
     text: `Die Sandinisten stürzen Diktator Anastasio Somoza. In den 1980er-Jahren finanzieren die USA die Contra-Rebellen gegen die neue Regierung.`,
   },
   {
-    d: '1979-12-12', title: 'NATO-Doppelbeschluss', cat: 'krise', imp: 2, place: 'Brüssel', at: [4.3517, 50.8503], wiki: 'NATO-Doppelbeschluss',
+    d: '1979-12-12', title: 'NATO-Doppelbeschluss', cat: 'krise', imp: 2, place: 'Brüssel', at: [4.3517, 50.8503], wiki: 'NATO-Doppelbeschluss', themes: ['deutsche-teilung'],
     text: `Als Antwort auf sowjetische SS-20-Raketen kündigt die NATO die Stationierung von Pershing-II-Raketen und Marschflugkörpern in Westeuropa an, falls Verhandlungen scheitern. In der Bundesrepublik entsteht eine breite Friedensbewegung.`,
   },
   {
@@ -230,7 +230,7 @@ export default [
     text: `Ein NATO-Stabsmanöver simuliert einen Atomkrieg. Die sowjetische Führung hält einen echten Angriff für möglich und versetzt Teile ihrer Streitkräfte in Alarmbereitschaft – eine der gefährlichsten Situationen des Kalten Krieges.`,
   },
   {
-    d: '1983-11-22', title: 'Bundestag stimmt der Nachrüstung zu', cat: 'krise', imp: 3, place: 'Bonn', at: [7.0982, 50.7374], wiki: 'Nachrüstung',
+    d: '1983-11-22', title: 'Bundestag stimmt der Nachrüstung zu', cat: 'krise', imp: 3, place: 'Bonn', at: [7.0982, 50.7374], wiki: 'Nachrüstung', themes: ['deutsche-teilung'],
     text: `Trotz Massenprotesten der Friedensbewegung beschließt der Bundestag die Stationierung amerikanischer Mittelstreckenraketen. Die ersten Pershing II treffen kurz darauf ein.`,
   },
   {
@@ -246,11 +246,11 @@ export default [
     text: `Im Kernkraftwerk Tschernobyl explodiert ein Reaktor. Radioaktive Wolken ziehen über weite Teile Europas. Die zögerliche Informationspolitik der sowjetischen Führung beschädigt das Vertrauen in das System und befördert Glasnost.`,
   },
   {
-    d: '1987-06-12', title: 'Reagan: „Mr. Gorbachev, tear down this wall!“', cat: 'politik', imp: 2, place: 'Berlin, Brandenburger Tor', at: [13.3765, 52.5163], wiki: 'Tear down this wall!',
+    d: '1987-06-12', title: 'Reagan: „Mr. Gorbachev, tear down this wall!“', cat: 'politik', imp: 2, place: 'Berlin, Brandenburger Tor', at: [13.3765, 52.5163], wiki: 'Tear down this wall!', themes: ['deutsche-teilung'],
     text: `Bei einer Rede vor dem Brandenburger Tor fordert US-Präsident Ronald Reagan den sowjetischen Parteichef auf, die Mauer niederzureißen.`,
   },
   {
-    d: '1987-09-07', title: 'Erich Honecker besucht die Bundesrepublik', cat: 'politik', imp: 3, place: 'Bonn', at: [7.0982, 50.7374], wiki: 'Erich Honecker',
+    d: '1987-09-07', title: 'Erich Honecker besucht die Bundesrepublik', cat: 'politik', imp: 3, place: 'Bonn', at: [7.0982, 50.7374], wiki: 'Erich Honecker', themes: ['deutsche-teilung'],
     text: `Als erster Staatsratsvorsitzender der DDR wird Honecker in Bonn mit militärischen Ehren empfangen – Höhepunkt der Anerkennung der DDR.`,
   },
   {
@@ -258,7 +258,7 @@ export default [
     text: `Reagan und Gorbatschow vereinbaren die Vernichtung aller landgestützten Mittelstreckenraketen. Erstmals wird eine ganze Waffengattung abgeschafft.`,
   },
   {
-    d: '1987-12-09', title: 'Beginn der Ersten Intifada', cat: 'aufstand', imp: 2, place: 'Gazastreifen', at: [34.48, 31.53], wiki: 'Erste Intifada', theme: 'nahost',
+    d: '1987-12-09', title: 'Beginn der Ersten Intifada', cat: 'aufstand', imp: 2, place: 'Gazastreifen', at: [34.48, 31.53], wiki: 'Erste Intifada', themes: ['nahost'],
     text: `Im Gazastreifen und im Westjordanland beginnt ein Aufstand der palästinensischen Bevölkerung gegen die israelische Besatzung, der bis 1993 andauert.`,
   },
   // 1989
@@ -279,7 +279,7 @@ export default [
     text: `Nach wochenlangen Protesten für Demokratie lässt die chinesische Führung die Demonstrationen in Peking von der Armee niederschlagen. Hunderte, möglicherweise Tausende Menschen werden getötet. Am selben Tag finden in Polen die ersten teilweise freien Wahlen statt.`,
   },
   {
-    d: '1989-08-19', title: 'Paneuropäisches Picknick', cat: 'aufstand', imp: 2, place: 'Bei Sopron', at: [16.62, 47.73], wiki: 'Paneuropäisches Picknick',
+    d: '1989-08-19', title: 'Paneuropäisches Picknick', cat: 'aufstand', imp: 2, place: 'Bei Sopron', at: [16.62, 47.73], wiki: 'Paneuropäisches Picknick', themes: ['deutsche-teilung'],
     text: `Bei einer Friedensveranstaltung an der österreichisch-ungarischen Grenze wird ein Tor für drei Stunden geöffnet. Rund 600 DDR-Bürgerinnen und -Bürger nutzen die Gelegenheit zur Flucht in den Westen.`,
   },
   {
@@ -287,19 +287,19 @@ export default [
     text: `Zum 50. Jahrestag des Hitler-Stalin-Pakts bilden rund zwei Millionen Menschen eine 600 Kilometer lange Menschenkette durch Estland, Lettland und Litauen und fordern die Unabhängigkeit.`,
   },
   {
-    d: '1989-09-11', title: 'Ungarn öffnet die Grenze für DDR-Flüchtlinge', cat: 'politik', imp: 2, place: 'Hegyeshalom', at: [17.15, 47.91], wiki: 'Ungarische Grenzöffnung 1989',
+    d: '1989-09-11', title: 'Ungarn öffnet die Grenze für DDR-Flüchtlinge', cat: 'politik', imp: 2, place: 'Hegyeshalom', at: [17.15, 47.91], wiki: 'Ungarische Grenzöffnung 1989', themes: ['deutsche-teilung'],
     text: `Ungarn lässt die Tausenden in Lagern wartenden DDR-Bürgerinnen und -Bürger ungehindert nach Österreich ausreisen. Bis Ende September fliehen rund 25 000 Menschen.`,
   },
   {
-    d: '1989-09-30', title: 'Genscher in der Prager Botschaft', cat: 'politik', imp: 2, place: 'Prag, Palais Lobkowicz', at: [14.3982, 50.0886], wiki: 'Prager Botschaftsflüchtlinge',
+    d: '1989-09-30', title: 'Genscher in der Prager Botschaft', cat: 'politik', imp: 2, place: 'Prag, Palais Lobkowicz', at: [14.3982, 50.0886], wiki: 'Prager Botschaftsflüchtlinge', themes: ['deutsche-teilung'],
     text: `Vom Balkon der bundesdeutschen Botschaft verkündet Außenminister Hans-Dietrich Genscher den rund 4000 Geflüchteten auf dem Gelände, dass sie in die Bundesrepublik ausreisen dürfen.`,
   },
   {
-    d: '1989-10-09', title: 'Montagsdemonstration in Leipzig', cat: 'aufstand', imp: 1, place: 'Leipzig, Nikolaikirche', at: [12.3781, 51.3405], wiki: 'Montagsdemonstrationen in der DDR',
+    d: '1989-10-09', title: 'Montagsdemonstration in Leipzig', cat: 'aufstand', imp: 1, place: 'Leipzig, Nikolaikirche', at: [12.3781, 51.3405], wiki: 'Montagsdemonstrationen in der DDR', themes: ['deutsche-teilung'],
     text: `Rund 70 000 Menschen ziehen mit dem Ruf „Wir sind das Volk!“ über den Leipziger Ring. Die Staatsmacht greift trotz Vorbereitungen nicht ein – der Durchbruch der Friedlichen Revolution.`,
   },
   {
-    d: '1989-11-09', title: 'Fall der Berliner Mauer', cat: 'politik', imp: 1, place: 'Berlin, Bornholmer Straße', at: [13.3981, 52.5547], wiki: 'Mauerfall',
+    d: '1989-11-09', title: 'Fall der Berliner Mauer', cat: 'politik', imp: 1, place: 'Berlin, Bornholmer Straße', at: [13.3981, 52.5547], wiki: 'Mauerfall', themes: ['deutsche-teilung'],
     text: `Nach einer missverständlichen Ankündigung neuer Reiseregeln durch Günter Schabowski strömen Tausende Ost-Berliner zu den Grenzübergängen. Am Übergang Bornholmer Straße öffnet der Wachhabende um 23.30 Uhr den Schlagbaum. In der Nacht feiern Menschen aus Ost und West auf der Mauer.`,
   },
   {
@@ -332,11 +332,11 @@ export default [
     text: `Der Irak annektiert Kuwait. Mit UN-Mandat befreit eine Koalition unter Führung der USA das Land Anfang 1991. Erstmals handeln die USA und die Sowjetunion im Sicherheitsrat gemeinsam.`,
   },
   {
-    d: '1990-09-12', title: 'Zwei-plus-Vier-Vertrag', cat: 'vertrag', imp: 1, place: 'Moskau', at: [37.6175, 55.752], wiki: 'Zwei-plus-Vier-Vertrag',
+    d: '1990-09-12', title: 'Zwei-plus-Vier-Vertrag', cat: 'vertrag', imp: 1, place: 'Moskau', at: [37.6175, 55.752], wiki: 'Zwei-plus-Vier-Vertrag', themes: ['deutsche-teilung'],
     text: `Die beiden deutschen Staaten und die vier Siegermächte regeln die äußeren Aspekte der Einheit: Deutschland erhält die volle Souveränität, die Oder-Neiße-Grenze wird endgültig anerkannt, die sowjetischen Truppen ziehen bis 1994 ab.`,
   },
   {
-    d: '1990-10-03', title: 'Deutsche Wiedervereinigung', cat: 'politik', imp: 1, place: 'Berlin, Reichstag', at: [13.3761, 52.5186], wiki: 'Deutsche Wiedervereinigung',
+    d: '1990-10-03', title: 'Deutsche Wiedervereinigung', cat: 'politik', imp: 1, place: 'Berlin, Reichstag', at: [13.3761, 52.5186], wiki: 'Deutsche Wiedervereinigung', themes: ['deutsche-teilung'],
     text: `Die DDR tritt der Bundesrepublik bei. Nach 41 Jahren ist Deutschland wieder ein Staat; Berlin wird Hauptstadt.`,
   },
   {
