@@ -10,7 +10,7 @@ import { START, END, toYmd, toIso, fromIso, formatDayMonth, yearOf, addMonths } 
 import { createTimeline } from './ui/timeline.js';
 import { topoToGeoJSON } from './lib/topojson.js';
 import { createPanel } from './ui/panel.js';
-import { getTheme, matchesTheme } from './data/themes.js';
+import { getTheme, matchesTheme, itemHasTheme } from './data/themes.js';
 import { createThemeMenu } from './ui/themeMenu.js';
 import { setupMenu } from './ui/menu.js';
 import { renderLegend, setBlocLegend, setPlanLegend } from './ui/legend.js';
@@ -28,7 +28,8 @@ function viewFromHash(h) {
   return { zoom, center: [lng, lat] };
 }
 const hash = location.hash.slice(1).split('/');
-if (/^\d{4}-\d{2}-\d{2}$/.test(hash[0] ?? '')) state.day = Math.max(START, Math.min(END, fromIso(hash[0])));
+const hashHasDate = /^\d{4}-\d{2}-\d{2}$/.test(hash[0] ?? '');
+if (hashHasDate) state.day = Math.max(START, Math.min(END, fromIso(hash[0])));
 const initialView = viewFromHash(hash) ?? { zoom: 3.6, center: [15, 50] };
 // Schwerpunktthema per Link (?thema=<Theme-ID>); unbekannte IDs werden ignoriert
 const urlTheme = getTheme(new URLSearchParams(location.search).get('thema'));
@@ -295,6 +296,16 @@ window.addEventListener('keydown', (e) => {
 
 // --- Kopfzeile: Ansicht, Schwerpunkt und Ebenen -----------------------------------------------
 document.querySelectorAll('.seg [data-mode]').forEach((b) => b.addEventListener('click', () => set({ mode: b.dataset.mode })));
+// Zeitraum eines Schwerpunkts: vom ersten bis zum letzten zugeordneten Ereignis oder Gebietswechsel
+function themeSpan(theme) {
+  const ts = [...events, ...changes].filter((it) => itemHasTheme(it, theme.id)).flatMap((it) => [it.t, it.te ?? it.t]);
+  return ts.length ? [Math.min(...ts), Math.max(...ts)] : null;
+}
+// Liegt das Datum außerhalb des Zeitraums, an dessen Anfang springen
+function enterThemePeriod(theme) {
+  const span = theme && themeSpan(theme);
+  if (span && (state.day < span[0] || state.day > span[1])) set({ day: span[0], playing: false });
+}
 // Karte auf den Ausschnitt eines Schwerpunkts ausrichten, sofern er nicht schon im Blick ist
 function showTheme(theme, { duration = 1400 } = {}) {
   if (!theme || !ready) return;
@@ -309,7 +320,10 @@ createThemeMenu({
   menu: document.getElementById('theme-menu'),
   events,
   changes,
-  onSelect: showTheme,
+  onSelect(theme) {
+    enterThemePeriod(theme);
+    showTheme(theme);
+  },
 });
 function renderThemeUrl() {
   // Thema in der Adresse festhalten (?thema=<Theme-ID>), Datum und Ausschnitt bleiben im Fragment
@@ -367,4 +381,6 @@ subscribe((s, changed) => {
   }
 });
 
+// Link mit Schwerpunkt, aber ohne Datum im Fragment: im Zeitraum des Schwerpunkts beginnen
+if (urlTheme && !hashHasDate) enterThemePeriod(urlTheme);
 renderDate();
