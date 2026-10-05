@@ -120,7 +120,8 @@ function mapInset() {
   const stage = document.getElementById('stage').getBoundingClientRect();
   const top = document.querySelector('.masthead').getBoundingClientRect().bottom - stage.top + 12;
   const covered = panel.coveredHeight();
-  return covered ? { top, left: 20, bottom: covered + 20 } : { top, left: 380, bottom: 30 };
+  if (covered) return { top, left: 20, bottom: covered + 20 };
+  return { top, left: panel.isCollapsed() ? 20 : 380, bottom: 30 };
 }
 
 const timeline = createTimeline({
