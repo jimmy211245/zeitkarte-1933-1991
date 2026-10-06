@@ -16,7 +16,7 @@ import { setupMenu } from './ui/menu.js';
 import { renderLegend, setBlocLegend, setPlanLegend } from './ui/legend.js';
 import { createTimeEngine } from './map/timeengine.js';
 import { setupAbout } from './ui/about.js';
-import { t, tf, translateDocument, setupLangSwitch } from './i18n.js';
+import { t, tf, LANG, translateDocument, setupLangSwitch } from './i18n.js';
 
 translateDocument();
 setupLangSwitch(document.getElementById('lang-seg'));
@@ -106,7 +106,16 @@ const labelsPromise = Promise.all([getJson('labels.json'), getJson('admin-labels
 });
 const adminPromise = getJson('admin.topo.json').then((t) => topoToGeoJSON(t));
 const plansPromise = getJson('plans.json');
-const [events, changes] = await Promise.all([getJson('events.json'), getJson('changes-list.json')]);
+const [events, changes, eventsEn] = await Promise.all([
+  getJson('events.json'),
+  getJson('changes-list.json'),
+  LANG === 'en' ? getJson('events.en.json').catch(() => []) : [],
+]);
+// Englische Fassung der Ereignisse (public/data/events.en.json, nach id): Titel, Ort und Text ersetzen
+for (const tr of eventsEn) {
+  const ev = events.find((e) => e.id === tr.id);
+  if (ev) Object.assign(ev, { title: tr.title, place: tr.place, text: tr.text });
+}
 const eventsById = new Map(events.map((e) => [e.id, e]));
 
 // --- Seitenleiste und Zeitband ----------------------------------------------------------------
