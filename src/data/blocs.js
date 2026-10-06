@@ -2,17 +2,18 @@
 // Regeln werden in Reihenfolge geprüft; die erste passende gewinnt.
 // Abhängige Gebiete (Kolonien, Annexionen) erhalten die Farbe ihres Souveräns.
 import { toDay, toYmd } from '../lib/dates.js';
+import { t } from '../i18n.js';
 
 export const BLOCS = {
-  achse: { name: 'Achsenmächte und Verbündete', color: '#b5655b' },
-  alliierte: { name: 'Alliierte', color: '#5d86ad' },
-  neutral: { name: 'Neutral', color: '#ddd6c6' },
+  achse: { name: t('Achsenmächte und Verbündete'), color: '#b5655b' },
+  alliierte: { name: t('Alliierte'), color: '#5d86ad' },
+  neutral: { name: t('Neutral'), color: '#ddd6c6' },
   nato: { name: 'NATO', color: '#4a77a8' },
-  westlich: { name: 'Mit dem Westen verbündet', color: '#a3bfdb' },
-  ostblock: { name: 'Warschauer Pakt / Ostblock', color: '#c4504a' },
-  kommunistisch: { name: 'Andere kommunistische Staaten', color: '#e0956a' },
-  blockfrei: { name: 'Blockfreie Staaten (Näherung)', color: '#94b98c' },
-  sonstige: { name: 'Sonstige', color: '#e4e1da' },
+  westlich: { name: t('Mit dem Westen verbündet'), color: '#a3bfdb' },
+  ostblock: { name: t('Warschauer Pakt / Ostblock'), color: '#c4504a' },
+  kommunistisch: { name: t('Andere kommunistische Staaten'), color: '#e0956a' },
+  blockfrei: { name: t('Blockfreie Staaten (Näherung)'), color: '#94b98c' },
+  sonstige: { name: t('Sonstige'), color: '#e4e1da' },
 };
 
 const WW2_END = '1945-09-02';

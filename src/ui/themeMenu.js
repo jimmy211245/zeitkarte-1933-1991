@@ -3,6 +3,7 @@
 import { state, set, subscribe } from '../state.js';
 import { getTheme, themeList, itemHasTheme } from '../data/themes.js';
 import { setupMenu } from './menu.js';
+import { t } from '../i18n.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
@@ -12,18 +13,18 @@ export function createThemeMenu({ button, menu, events, changes, onSelect }) {
   const label = button.querySelector('.long');
   const labelShort = button.querySelector('.short');
 
-  const counts = (t) => `${events.filter((e) => itemHasTheme(e, t.id)).length} Ereignisse · ${changes.filter((c) => itemHasTheme(c, t.id)).length} Gebietsänderungen`;
+  const counts = (th) => `${events.filter((e) => itemHasTheme(e, th.id)).length} ${t('Ereignisse')} · ${changes.filter((c) => itemHasTheme(c, th.id)).length} ${t('Gebietsänderungen')}`;
   const options = [
-    '<label><input type="radio" name="theme" value="" /><span><b>Kein Schwerpunkt</b><small>Alle Ereignisse und Gebietsänderungen</small></span></label>',
-    ...themeList().map((t) => `<label><input type="radio" name="theme" value="${esc(t.id)}" /><span><b>${esc(t.name)}</b><small>${esc(t.description)}</small><small>${counts(t)}</small></span></label>`),
+    `<label><input type="radio" name="theme" value="" /><span><b>${t('Kein Schwerpunkt')}</b><small>${t('Alle Ereignisse und Gebietsänderungen')}</small></span></label>`,
+    ...themeList().map((th) => `<label><input type="radio" name="theme" value="${esc(th.id)}" /><span><b>${esc(t(th.name))}</b><small>${esc(t(th.description))}</small><small>${counts(th)}</small></span></label>`),
   ];
   menu.innerHTML = options.join('');
 
   function render() {
     const theme = getTheme(state.theme);
     button.classList.toggle('active', !!theme);
-    label.textContent = theme ? theme.name : 'Schwerpunkt';
-    labelShort.textContent = theme ? theme.shortName : 'Schwerpunkt';
+    label.textContent = theme ? t(theme.name) : t('Schwerpunkt');
+    labelShort.textContent = theme ? t(theme.shortName) : t('Schwerpunkt');
     for (const input of menu.querySelectorAll('input')) input.checked = input.value === (theme?.id ?? '');
   }
 
