@@ -37,7 +37,7 @@ const EN = ({ events, changes }) => `
       <button type="button" class="close" aria-label="Close"><svg><use href="#i-close"/></svg></button>
       <h2>About this map</h2>
       <p>The timeline map shows state borders, colonial empires and ${events} events from 30 January 1933, the day Hitler was appointed Chancellor, to the dissolution of the Soviet Union at the end of 1991. Every border is stored to the day; ${changes} territorial changes are detected automatically and can be opened one by one.</p>
-      <p class="about-note"><i>Note:</i> The interface is available in English; event texts, territorial changes and map labels are currently available in German only.</p>
+      <p class="about-note"><i>Note:</i> The interface and the events (titles, places, descriptions) are available in English; territorial changes and map labels are currently available in German only.</p>
 
       <h3>Controls</h3>
       <ul>
