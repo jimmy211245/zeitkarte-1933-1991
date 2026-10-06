@@ -25,7 +25,7 @@ const DE = ({ events, changes }) => `
         <li><b>Deutsche Teilung:</b> Westzonen und Sowjetische Besatzungszone sind als zwei Gebiete erfasst, Berlin als Gebiet unter Viermächteverwaltung, ab Dezember 1948 mit Ost- und West-Berlin; das Saarland erscheint 1947–1956 mit dem Status „Protektorat“ (offiziell teilautonom unter französischer Aufsicht). Die Grenze der Westzonen untereinander (amerikanische, britische, französische Zone), die Berliner Sektoren und die Bezirke der DDR (ab 1952) sind nicht eingezeichnet. Länder erscheinen ab 1949 im heutigen Zuschnitt.</li>
         <li><b>Binnengrenzen:</b> Nur für Länder, deren Gliederung sich für die jeweilige Zeit belegen lässt: Bundesstaaten der USA, Provinzen Kanadas, Bundesstaaten Mexikos, Brasiliens und Australiens, Länder der Bundesrepublik, der DDR (bis 1952), Österreichs und Kantone der Schweiz nach Natural Earth (heutiger Zuschnitt, für frühere Zeiträume zusammengelegt) sowie die Teilrepubliken der Sowjetunion, Jugoslawiens und der Tschechoslowakei nach den Grenzen ihrer Nachfolgestaaten (CShapes).</li>
         <li><b>Basiskarte:</b> Natural Earth (gemeinfrei). Moderne Stauseen erscheinen erst ab ihrer Entstehung, der Aralsee in seiner damaligen Größe.</li>
-        <li><b>Ereignisse:</b> redaktionell zusammengestellt; Links führen zur deutschsprachigen Wikipedia.</li>
+        <li><b>Ereignisse:</b> redaktionell zusammengestellt; Links führen je nach Sprache zur deutschen oder englischen Wikipedia.</li>
       </ul>
 
       <h3>Hinweis</h3>
@@ -56,7 +56,7 @@ const EN = ({ events, changes }) => `
         <li><b>Division of Germany:</b> The western zones and the Soviet occupation zone are recorded as two areas, Berlin as an area under four-power administration, from December 1948 with East and West Berlin; the Saarland appears 1947–1956 with the status “protectorate” (officially semi-autonomous under French supervision). The boundaries between the western zones (American, British, French), the Berlin sectors and the districts of the GDR (from 1952) are not shown. States appear in their present form from 1949.</li>
         <li><b>Internal borders:</b> Only for countries whose subdivision can be documented for the period: US states, Canadian provinces, Mexican, Brazilian and Australian states, states of the Federal Republic, the GDR (until 1952), Austria and Swiss cantons after Natural Earth (present-day form, merged for earlier periods) as well as the republics of the Soviet Union, Yugoslavia and Czechoslovakia following the borders of their successor states (CShapes).</li>
         <li><b>Base map:</b> Natural Earth (public domain). Modern reservoirs appear only from their creation; the Aral Sea at its then size.</li>
-        <li><b>Events:</b> editorially compiled; links lead to Wikipedia.</li>
+        <li><b>Events:</b> editorially compiled; links lead to the English-language Wikipedia.</li>
       </ul>
 
       <h3>Notice</h3>
