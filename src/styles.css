@@ -90,6 +90,8 @@ svg { width: 18px; height: 18px; flex: none; }
   color: var(--ink-2);
 }
 .seg button[aria-checked='true'] { background: var(--ink); color: var(--paper); }
+.lang-seg { margin-left: auto; } /* Sprachumschalter immer sichtbar, rechts neben den Knöpfen */
+.lang-seg button { padding: 5px 9px; font-weight: 600; letter-spacing: 0.04em; }
 
 .icon-btn {
   display: inline-flex;
@@ -425,14 +427,15 @@ svg { width: 18px; height: 18px; flex: none; }
    Knöpfe ohne Beschriftung – sonst stößt sie an die Zoomknöpfe. Einzeilig endet die Kopfzeile mit dem
    längsten Schwerpunktnamen bei rund 1100 px, die Zoomknöpfe beginnen 40 px vor dem rechten Rand. */
 @media (max-width: 1180px) {
-  .masthead { display: grid; grid-template-columns: 1fr auto auto; justify-items: start; gap: 6px; }
+  .masthead { display: grid; grid-template-columns: 1fr auto auto auto; justify-items: start; gap: 6px; }
   .brand { margin: 0; grid-area: 1 / 1; }
   .panel-open { grid-area: 1 / 1; }
   .panel-open:not([hidden]) + .brand { margin-left: 48px; }
-  #layers-wrap { grid-area: 1 / 2; }
-  #about-btn { grid-area: 1 / 3; }
+  #lang-seg { grid-area: 1 / 2; margin-left: 0; }
+  #layers-wrap { grid-area: 1 / 3; }
+  #about-btn { grid-area: 1 / 4; }
   .seg { grid-area: 2 / 1; }
-  .theme-wrap { grid-area: 2 / 2 / 3 / 4; justify-self: end; }
+  .theme-wrap { grid-area: 2 / 2 / 3 / 5; justify-self: end; }
   .menu { left: auto; right: 0; }
   .icon-btn span { display: none; }
   .theme-btn .long { display: none; }

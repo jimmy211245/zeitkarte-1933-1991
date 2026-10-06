@@ -16,6 +16,10 @@ import { setupMenu } from './ui/menu.js';
 import { renderLegend, setBlocLegend, setPlanLegend } from './ui/legend.js';
 import { createTimeEngine } from './map/timeengine.js';
 import { setupAbout } from './ui/about.js';
+import { t, tf, translateDocument, setupLangSwitch } from './i18n.js';
+
+translateDocument();
+setupLangSwitch(document.getElementById('lang-seg'));
 
 const DATA = new URL(`${import.meta.env.BASE_URL}data`, window.location.href).href.replace(/\/$/, '');
 
@@ -52,7 +56,10 @@ map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-left');
 map.addControl(
   new maplibregl.AttributionControl({
     compact: true,
-    customAttribution: 'Grenzen: <a href="https://icr.ethz.ch/data/cshapes/" target="_blank" rel="noopener">CShapes 2.0</a> (ETH Zürich, CC BY-NC-SA 4.0), ergänzt · Küsten, Flüsse, Binnengrenzen: Natural Earth',
+    customAttribution: tf(
+      'Grenzen: <a href="https://icr.ethz.ch/data/cshapes/" target="_blank" rel="noopener">CShapes 2.0</a> (ETH Zürich, CC BY-NC-SA 4.0), ergänzt · Küsten, Flüsse, Binnengrenzen: Natural Earth',
+      'Borders: <a href="https://icr.ethz.ch/data/cshapes/" target="_blank" rel="noopener">CShapes 2.0</a> (ETH Zurich, CC BY-NC-SA 4.0), supplemented · Coasts, rivers, internal borders: Natural Earth',
+    ),
   }),
 );
 // Auf schmalen Bildschirmen startet die Quellenangabe eingeklappt (Knopf „i“), sonst verdeckt sie
@@ -364,7 +371,7 @@ subscribe((s, changed) => {
   }
   if (changed.includes('playing')) {
     playBtn.innerHTML = `<svg><use href="#i-${s.playing ? 'pause' : 'play'}"/></svg>`;
-    playBtn.title = s.playing ? 'Anhalten (Leertaste)' : 'Abspielen (Leertaste)';
+    playBtn.title = s.playing ? t('Anhalten (Leertaste)') : t('Abspielen (Leertaste)');
     if (s.playing) {
       if (s.day >= END) set({ day: START });
       playDay = tickDay = state.day;

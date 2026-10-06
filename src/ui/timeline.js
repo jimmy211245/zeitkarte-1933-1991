@@ -4,8 +4,11 @@ import { state, set, subscribe } from '../state.js';
 import { START, END, fromIso, parts, yearStart, formatShortPrecision, toDay } from '../lib/dates.js';
 import { ERAS } from '../data/eras.js';
 import { CATEGORIES } from '../data/categories.js';
+import { LANG } from '../i18n.js';
 
-const MONTH_ABBR = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+const MONTH_ABBR = LANG === 'en'
+  ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  : ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
 const ERAS_D = ERAS.map((e) => ({ ...e, a: fromIso(e.from), b: fromIso(e.to) }));
 
 export function createTimeline({ tape, overview, tooltip, onPick }) {
