@@ -138,7 +138,9 @@ function mapInset() {
   const top = document.querySelector('.masthead').getBoundingClientRect().bottom - stage.top + 12;
   const covered = panel.coveredHeight();
   if (covered) return { top, left: 20, bottom: covered + 20 };
-  return { top, left: panel.isCollapsed() ? 20 : 380, bottom: 30 };
+  // breite Bildschirme: die Zeitleiste schwebt über dem unteren Kartenrand
+  const dock = Math.max(0, stage.bottom - document.getElementById('dock').getBoundingClientRect().top);
+  return { top, left: panel.isCollapsed() ? 20 : 410, bottom: dock + 30 };
 }
 
 const timeline = createTimeline({

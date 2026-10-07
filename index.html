@@ -12,6 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wdth,wght@0,62.5..100,300..800;1,62.5..100,300..800&family=Noto+Serif:ital,wdth,wght@0,62.5..100,300..800;1,62.5..100,300..800&display=swap"
       rel="stylesheet"
     />
+    <!-- nur die Ziffern für die große Jahreszahl -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:wght@600&text=0123456789&display=swap" rel="stylesheet" />
   </head>
   <body>
     <svg width="0" height="0" style="position: absolute" aria-hidden="true">
@@ -38,6 +40,7 @@
         <header class="masthead">
           <button type="button" class="icon-btn panel-open" id="panel-open" title="Liste einblenden" hidden><svg><use href="#i-list" /></svg><span>Liste</span></button>
           <h1 class="brand">Zeitkarte <span>1933–1991</span></h1>
+          <div class="toolbar">
           <div class="seg" role="radiogroup" aria-label="Kartenansicht">
             <button type="button" role="radio" aria-checked="true" data-mode="states">Staaten</button>
             <button type="button" role="radio" aria-checked="false" data-mode="blocs">Bündnisse</button>
@@ -66,6 +69,7 @@
             </div>
           </div>
           <button type="button" class="icon-btn" id="about-btn" title="Über diese Karte"><svg><use href="#i-info" /></svg><span>Über</span></button>
+          </div>
         </header>
 
         <aside id="panel" aria-label="Ereignisse und Gebietsänderungen">
@@ -75,11 +79,18 @@
             <span class="peek" id="peek"></span>
             <svg class="chev" aria-hidden="true"><use href="#i-back" /></svg>
           </button>
+          <!-- nur breite Bildschirme: Titel der Seite (die Überschrift selbst steht unsichtbar in der Kopfzeile) -->
+          <div class="panel-head">
+            <div class="panel-brand" aria-hidden="true">
+              <span class="panel-title">Zeitkarte <span>1933–1991</span></span>
+              <span class="panel-sub">Von der Machtübernahme Hitlers bis zum Ende des Kalten Krieges</span>
+            </div>
+            <button type="button" class="panel-collapse" id="panel-collapse" title="Liste ausblenden, um die ganze Karte zu sehen" aria-label="Liste ausblenden"><svg><use href="#i-back" /></svg></button>
+          </div>
           <div class="panel-list" id="panel-list">
             <div class="tabs" role="tablist">
               <button type="button" role="tab" aria-selected="true" data-tab="events">Ereignisse <span class="count" id="count-events"></span></button>
               <button type="button" role="tab" aria-selected="false" data-tab="changes">Gebietsänderungen <span class="count" id="count-changes"></span></button>
-              <button type="button" class="panel-collapse" id="panel-collapse" title="Liste ausblenden, um die ganze Karte zu sehen" aria-label="Liste ausblenden"><svg><use href="#i-back" /></svg></button>
             </div>
             <div class="theme-banner" id="theme-banner" hidden></div>
             <div class="search">

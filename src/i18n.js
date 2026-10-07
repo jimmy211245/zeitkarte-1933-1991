@@ -40,6 +40,7 @@ const EN = {
   'Über': 'About',
   'Sprache': 'Language',
   'Zeitkarte': 'Timeline Map',
+  'Von der Machtübernahme Hitlers bis zum Ende des Kalten Krieges': 'From Hitler’s rise to power to the end of the Cold War',
   // Seitenleiste
   'Ereignisse und Gebietsänderungen': 'Events and territorial changes',
   'Gebietsänderungen': 'Territorial changes',

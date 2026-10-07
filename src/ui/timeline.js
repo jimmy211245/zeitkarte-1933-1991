@@ -21,9 +21,13 @@ export function createTimeline({ tape, overview, tooltip, onPick }) {
   let frame = 0;
 
   const css = getComputedStyle(document.documentElement);
-  const INK = css.getPropertyValue('--ink').trim() || '#22272e';
-  const INK2 = css.getPropertyValue('--ink-2').trim() || '#5a636d';
-  const SIGNAL = css.getPropertyValue('--signal').trim() || '#a3262a';
+  const INK = css.getPropertyValue('--ink').trim() || '#1c2128';
+  const SIGNAL = css.getPropertyValue('--signal').trim() || '#b3261e';
+  // Das Band liegt auf dunklem Grund: Linien und Jahreszahlen hell, Epochennamen dunkel auf ihrer Farbe
+  const INK2 = css.getPropertyValue('--on-night-2').trim() || '#9aa3ad';
+  const KNOB = css.getPropertyValue('--on-night').trim() || '#f3efe6';
+  const NIGHT = css.getPropertyValue('--night').trim() || '#171b21';
+  const LINE = (a) => `rgba(243,239,230,${a})`;
   const SANS = '"Noto Sans", system-ui, sans-serif';
 
   function resize() {
@@ -50,7 +54,7 @@ export function createTimeline({ tape, overview, tooltip, onPick }) {
     const d0 = dayOf(0), d1 = dayOf(W);
 
     // Bereich außerhalb 1933–1991
-    ctx.fillStyle = 'rgba(37,42,49,0.06)';
+    ctx.fillStyle = LINE(0.05);
     if (d0 < START) ctx.fillRect(0, 0, xOf(START), H);
     if (d1 > END) ctx.fillRect(xOf(END), 0, W - xOf(END), H);
 
@@ -83,7 +87,7 @@ export function createTimeline({ tape, overview, tooltip, onPick }) {
       const x = xOf(yearStart(y));
       if (x < -60 || x > W + 60) continue;
       const major = y % yearStep === 0;
-      ctx.fillStyle = major ? 'rgba(37,42,49,0.32)' : 'rgba(37,42,49,0.12)';
+      ctx.fillStyle = major ? LINE(0.28) : LINE(0.12);
       ctx.fillRect(Math.round(x), top, 1, major ? H - top : 8);
       if (major) {
         ctx.fillStyle = INK2;
@@ -93,7 +97,7 @@ export function createTimeline({ tape, overview, tooltip, onPick }) {
         for (let m = 2; m <= 12; m++) {
           const mx = xOf(toDay(y * 10000 + m * 100 + 1));
           if (mx < -30 || mx > W + 30) continue;
-          ctx.fillStyle = 'rgba(37,42,49,0.14)';
+          ctx.fillStyle = LINE(0.14);
           ctx.fillRect(Math.round(mx), top, 1, 7);
           if (pxPerYear > 520) {
             ctx.fillStyle = INK2;
@@ -112,7 +116,7 @@ export function createTimeline({ tape, overview, tooltip, onPick }) {
     }
     if (scale < 0.25) {
       for (let d = Math.ceil(d0); d <= d1; d++) {
-        ctx.fillStyle = 'rgba(37,42,49,0.1)';
+        ctx.fillStyle = LINE(0.1);
         ctx.fillRect(Math.round(xOf(d)), H - 6, 1, 6);
       }
     }
@@ -123,7 +127,7 @@ export function createTimeline({ tape, overview, tooltip, onPick }) {
       const x = xOf(c.t);
       if (x < -5 || x > W + 5) continue;
       const r = c.imp === 1 ? 3.6 : c.imp === 2 ? 2.8 : 2.1;
-      ctx.fillStyle = hover && hover.kind === 'change' && hover.id === c.id ? SIGNAL : 'rgba(37,42,49,0.55)';
+      ctx.fillStyle = hover && hover.kind === 'change' && hover.id === c.id ? SIGNAL : LINE(0.6);
       ctx.globalAlpha = c.dim ? 0.25 : 1;
       ctx.beginPath();
       ctx.moveTo(x, cy - r); ctx.lineTo(x + r, cy); ctx.lineTo(x, cy + r); ctx.lineTo(x - r, cy);
@@ -139,19 +143,26 @@ export function createTimeline({ tape, overview, tooltip, onPick }) {
       const h = ev.imp === 1 ? 22 : ev.imp === 2 ? 15 : 9;
       const isHover = hover && hover.kind === 'event' && hover.id === ev.id;
       const isSel = state.selection && state.selection.kind === 'event' && state.selection.id === ev.id;
-      ctx.fillStyle = CATEGORIES[ev.cat]?.color ?? INK2;
+      ctx.fillStyle = CATEGORIES[ev.cat]?.tape ?? INK2;
       ctx.globalAlpha = ev.dim ? 0.25 : 1;
       ctx.fillRect(Math.round(x) - (isHover || isSel ? 1.5 : 1), base - h, isHover || isSel ? 3 : 2, h);
       ctx.globalAlpha = 1;
     }
 
-    // Nadel
+    // Zukunft rechts der Nadel abdunkeln (nur die Marken, nicht die Jahreszahlen)
     const nx = Math.round(W / 2) + 0.5;
+    ctx.fillStyle = NIGHT;
+    ctx.globalAlpha = 0.4;
+    ctx.fillRect(nx + 1, base - 24, W - nx, H - base + 24);
+    ctx.globalAlpha = 1;
+
+    // Nadel mit Griff
     ctx.strokeStyle = SIGNAL;
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(nx, 0); ctx.lineTo(nx, H); ctx.stroke();
     ctx.fillStyle = SIGNAL;
-    ctx.beginPath(); ctx.moveTo(nx - 6, 0); ctx.lineTo(nx + 6, 0); ctx.lineTo(nx, 7); ctx.fill();
+    ctx.strokeStyle = KNOB;
+    ctx.beginPath(); ctx.arc(nx, 6, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
 
     drawOverview();
   }
