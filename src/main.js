@@ -111,10 +111,11 @@ const [events, changes, eventsEn] = await Promise.all([
   getJson('changes-list.json'),
   LANG === 'en' ? getJson('events.en.json').catch(() => []) : [],
 ]);
-// Englische Fassung der Ereignisse (public/data/events.en.json, nach id): Titel, Ort und Text ersetzen
+// Englische Fassung der Ereignisse (public/data/events.en.json, nach id): Titel, Ort und Text ersetzen;
+// wiki dort = englischer Artikel (scripts/wiki-en.mjs)
 for (const tr of eventsEn) {
   const ev = events.find((e) => e.id === tr.id);
-  if (ev) Object.assign(ev, { title: tr.title, place: tr.place, text: tr.text });
+  if (ev) Object.assign(ev, { title: tr.title, place: tr.place, text: tr.text, wikiEn: tr.wiki });
 }
 const eventsById = new Map(events.map((e) => [e.id, e]));
 

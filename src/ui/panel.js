@@ -281,11 +281,13 @@ export function createPanel({ events, changes, onFocus }) {
       const c = CATEGORIES[it.cat];
       const date = it.end ? `${formatPrecision(it.t, it.prec)} – ${formatPrecision(it.tEnd, it.precEnd ?? it.prec)}` : formatPrecision(it.t, it.prec);
       const paragraphs = (it.text || '').split(/\n\n+/).map((p) => `<p>${esc(p)}</p>`).join('');
-      // deutsche Seite → deutsche Wikipedia (Suchbegriff aus den Daten), englische Seite → englische
-      // Wikipedia mit dem englischen Titel als Suchbegriff (der deutsche Begriff würde dort nichts finden)
+      // deutsche Seite → deutsche Wikipedia (Suchbegriff aus den Daten), englische Seite → englischer
+      // Artikel über den Sprachlink (wikiEn); fehlt der, Suche mit dem englischen Titel
       const wiki = it.wiki
         ? LANG === 'en'
-          ? `https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(it.title)}&title=Special%3ASearch&go=Go`
+          ? it.wikiEn
+            ? `https://en.wikipedia.org/wiki/${encodeURIComponent(it.wikiEn.replaceAll(' ', '_'))}`
+            : `https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(it.title)}&title=Special%3ASearch&go=Go`
           : `https://de.wikipedia.org/w/index.php?search=${encodeURIComponent(it.wiki)}&title=Spezial%3ASuche&go=Artikel`
         : null;
       body = `
