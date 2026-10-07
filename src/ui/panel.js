@@ -3,6 +3,7 @@ import { state, set, subscribe } from '../state.js';
 import { CATEGORIES, CHANGE_TYPES } from '../data/categories.js';
 import { formatShortPrecision, formatPrecision, parts } from '../lib/dates.js';
 import { getTheme, itemHasTheme, matchesTheme, themesOf } from '../data/themes.js';
+import { t, tf, fmtNumber, LANG } from '../i18n.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
@@ -22,7 +23,7 @@ export function createPanel({ events, changes, onFocus }) {
     for (const [el, list] of countEls) {
       const n = list.filter((it) => matchesTheme(it, state.theme)).length;
       el.textContent = n;
-      el.parentElement.title = state.theme ? `${n} von ${list.length}` : '';
+      el.parentElement.title = state.theme ? tf('{n} von {all}', '{n} of {all}', { n, all: list.length }) : '';
     }
   }
 
@@ -75,7 +76,7 @@ export function createPanel({ events, changes, onFocus }) {
     const kind = sel ? sel.kind : state.tab === 'events' ? 'event' : 'change';
     const it = sel ? byId[sel.kind].get(sel.id) : visible[currentIdx] ?? visible[0];
     if (!it) {
-      peekEl.innerHTML = '<span class="peek-what">Keine Treffer</span>';
+      peekEl.innerHTML = `<span class="peek-what">${t('Keine Treffer')}</span>`;
       return;
     }
     const dot = kind === 'event' ? `<span class="dot" style="background:${CATEGORIES[it.cat]?.color}"></span>` : '';
@@ -133,7 +134,7 @@ export function createPanel({ events, changes, onFocus }) {
     searchTimer = setTimeout(() => set({ query: searchEl.value.trim() }), 120);
   });
 
-  const norm = (s) => s.toLocaleLowerCase('de').normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const norm = (s) => s.toLocaleLowerCase(LANG).normalize('NFD').replace(/[̀-ͯ]/g, '');
 
   const themeBanner = document.getElementById('theme-banner');
   function renderThemeBanner() {
@@ -142,7 +143,7 @@ export function createPanel({ events, changes, onFocus }) {
     if (!theme) return;
     const nEvents = events.filter((e) => itemHasTheme(e, theme.id)).length;
     const nChanges = changes.filter((c) => itemHasTheme(c, theme.id)).length;
-    themeBanner.innerHTML = `<span><b>Schwerpunkt ${esc(theme.name)}</b> · ${nEvents} Ereignisse · ${nChanges} Gebietsänderungen</span><button type="button" data-act="theme-off" title="Schwerpunkt aufheben"><svg><use href="#i-close"/></svg></button>`;
+    themeBanner.innerHTML = `<span><b>${t('Schwerpunkt')} ${esc(t(theme.name))}</b> · ${nEvents} ${t('Ereignisse')} · ${nChanges} ${t('Gebietsänderungen')}</span><button type="button" data-act="theme-off" title="${t('Schwerpunkt aufheben')}"><svg><use href="#i-close"/></svg></button>`;
   }
   themeBanner.addEventListener('click', (e) => {
     if (e.target.closest('[data-act="theme-off"]')) set({ theme: null });
@@ -167,7 +168,7 @@ export function createPanel({ events, changes, onFocus }) {
   function renderList() {
     visible = filterItems();
     if (visible.length === 0) {
-      listEl.innerHTML = `<li class="empty">Keine Treffer. Suchbegriff ändern oder Filter zurücksetzen.</li>`;
+      listEl.innerHTML = `<li class="empty">${t('Keine Treffer. Suchbegriff ändern oder Filter zurücksetzen.')}</li>`;
       rows = [];
       currentIdx = -1;
       updatePeek();
@@ -182,7 +183,7 @@ export function createPanel({ events, changes, onFocus }) {
         const c = CATEGORIES[it.cat];
         html += `<li class="item" data-id="${it.id}"><span class="when">${esc(formatShortPrecision(it.t, it.prec).replace(/ \d{4}$/, ''))}</span><span class="what"><span class="dot" style="background:${c?.color}"></span>${esc(it.title)}</span>${it.place ? `<span class="sub">${esc(it.place)}</span>` : ''}</li>`;
       } else {
-        html += `<li class="item" data-id="${it.id}"><span class="when">${esc(formatShortPrecision(it.t, it.prec).replace(/ \d{4}$/, ''))}</span><span class="what">${esc(it.title)}</span><span class="sub">${esc(CHANGE_TYPES[it.type] ?? '')}${it.area ? ` · ca. ${it.area.toLocaleString('de-DE')} km²` : ''}</span></li>`;
+        html += `<li class="item" data-id="${it.id}"><span class="when">${esc(formatShortPrecision(it.t, it.prec).replace(/ \d{4}$/, ''))}</span><span class="what">${esc(it.title)}</span><span class="sub">${esc(CHANGE_TYPES[it.type] ?? '')}${it.area ? ` · ${t('ca.')} ${fmtNumber(it.area)} km²` : ''}</span></li>`;
       }
     }
     listEl.innerHTML = html;
@@ -280,39 +281,43 @@ export function createPanel({ events, changes, onFocus }) {
       const c = CATEGORIES[it.cat];
       const date = it.end ? `${formatPrecision(it.t, it.prec)} – ${formatPrecision(it.tEnd, it.precEnd ?? it.prec)}` : formatPrecision(it.t, it.prec);
       const paragraphs = (it.text || '').split(/\n\n+/).map((p) => `<p>${esc(p)}</p>`).join('');
+      // deutsche Seite → deutsche Wikipedia (Suchbegriff aus den Daten), englische Seite → englische
+      // Wikipedia mit dem englischen Titel als Suchbegriff (der deutsche Begriff würde dort nichts finden)
       const wiki = it.wiki
-        ? `https://de.wikipedia.org/w/index.php?search=${encodeURIComponent(it.wiki)}&title=Spezial%3ASuche&go=Artikel`
+        ? LANG === 'en'
+          ? `https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(it.title)}&title=Special%3ASearch&go=Go`
+          : `https://de.wikipedia.org/w/index.php?search=${encodeURIComponent(it.wiki)}&title=Spezial%3ASuche&go=Artikel`
         : null;
       body = `
-        <div class="detail-kicker"><span class="cat"><i style="background:${c?.color}"></i>${esc(c?.name)}</span>${themesOf(it).map((t) => `<span class="theme-tag">${esc(t.name)}</span>`).join('')}</div>
+        <div class="detail-kicker"><span class="cat"><i style="background:${c?.color}"></i>${esc(c?.name)}</span>${themesOf(it).map((th) => `<span class="theme-tag">${esc(t(th.name))}</span>`).join('')}</div>
         <div class="detail-date">${esc(date)}</div>
         <h2 class="detail-title">${esc(it.title)}</h2>
         ${it.place ? `<div class="detail-place"><svg><use href="#i-pin"/></svg>${esc(it.place)}</div>` : ''}
         <div class="detail-text">${paragraphs}</div>
-        ${it.plan ? `<p class="detail-note">Die Karte zeigt den Plan schematisch, nachgezeichnet nach einer zeitgenössischen Karte; Linien können um einige Kilometer abweichen.</p>` : ''}
+        ${it.plan ? `<p class="detail-note">${t('Die Karte zeigt den Plan schematisch, nachgezeichnet nach einer zeitgenössischen Karte; Linien können um einige Kilometer abweichen.')}</p>` : ''}
         <div class="detail-links">
-          ${it.lon != null || it.plan ? `<button type="button" class="link-btn" data-act="fly"><svg><use href="#i-pin"/></svg>${it.plan ? 'Plan auf der Karte zeigen' : 'Auf der Karte zeigen'}</button>` : ''}
+          ${it.lon != null || it.plan ? `<button type="button" class="link-btn" data-act="fly"><svg><use href="#i-pin"/></svg>${it.plan ? t('Plan auf der Karte zeigen') : t('Auf der Karte zeigen')}</button>` : ''}
           ${wiki ? `<a class="link-btn" href="${wiki}" target="_blank" rel="noopener"><svg><use href="#i-ext"/></svg>Wikipedia</a>` : ''}
         </div>`;
     } else {
       body = `
-        <div class="detail-kicker">${esc(CHANGE_TYPES[it.type] ?? 'Gebietsänderung')}</div>
+        <div class="detail-kicker">${esc(CHANGE_TYPES[it.type] ?? t('Gebietsänderungen'))}</div>
         <div class="detail-date">${esc(formatPrecision(it.t))}</div>
         <h2 class="detail-title">${esc(it.title)}</h2>
         ${it.text ? `<div class="detail-text"><p>${esc(it.text)}</p></div>` : ''}
         <dl class="detail-facts">
-          ${it.from && it.from !== it.to ? `<dt>bisher</dt><dd>${esc(it.from)}</dd>` : ''}
-          <dt>danach</dt><dd>${esc(it.toFull ?? it.to)}${it.sov ? ` (${esc(it.sov)})` : ''}</dd>
-          <dt>Fläche</dt><dd>ca. ${it.area.toLocaleString('de-DE')} km²</dd>
+          ${it.from && it.from !== it.to ? `<dt>${t('bisher')}</dt><dd>${esc(it.from)}</dd>` : ''}
+          <dt>${t('danach')}</dt><dd>${esc(it.toFull ?? it.to)}${it.sov ? ` (${esc(it.sov)})` : ''}</dd>
+          <dt>${t('Fläche')}</dt><dd>${t('ca.')} ${fmtNumber(it.area)} km²</dd>
         </dl>
-        <div class="detail-links"><button type="button" class="link-btn" data-act="fly"><svg><use href="#i-pin"/></svg>Gebiet zeigen</button></div>`;
+        <div class="detail-links"><button type="button" class="link-btn" data-act="fly"><svg><use href="#i-pin"/></svg>${t('Gebiet zeigen')}</button></div>`;
     }
     detailEl.innerHTML = `
       <div class="detail-bar">
-        <button type="button" data-act="back"><svg><use href="#i-back"/></svg>Liste</button>
+        <button type="button" data-act="back"><svg><use href="#i-back"/></svg>${t('Liste')}</button>
         <span class="detail-bar-end">
-          <button type="button" class="panel-collapse" data-act="collapse" title="Liste ausblenden, um die ganze Karte zu sehen" aria-label="Liste ausblenden"><svg><use href="#i-back"/></svg></button>
-          <button type="button" data-act="close" title="Schließen"><svg><use href="#i-close"/></svg></button>
+          <button type="button" class="panel-collapse" data-act="collapse" title="${t('Liste ausblenden, um die ganze Karte zu sehen')}" aria-label="${t('Liste ausblenden')}"><svg><use href="#i-back"/></svg></button>
+          <button type="button" data-act="close" title="${t('Schließen')}"><svg><use href="#i-close"/></svg></button>
         </span>
       </div>
       <div class="detail-body">${body}</div>
@@ -347,7 +352,7 @@ export function createPanel({ events, changes, onFocus }) {
   subscribe((s, changed) => {
     if (changed.includes('tab')) {
       document.querySelectorAll('.tabs [role=tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === s.tab)));
-      searchEl.placeholder = s.tab === 'events' ? 'Suchen, z. B. Stalingrad' : 'Suchen, z. B. Sudetenland';
+      searchEl.placeholder = s.tab === 'events' ? t('Suchen, z. B. Stalingrad') : t('Suchen, z. B. Sudetenland');
     }
     if (changed.includes('tab') || changed.includes('categories')) renderChips();
     if (changed.includes('theme')) {

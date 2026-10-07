@@ -15,6 +15,7 @@ Interaktive Karte der Staatsgrenzen, Gebietsänderungen und Ereignisse vom 30. J
   - **Nahostkonflikt** (`?thema=nahost`): 93 Ereignisse von 1933 bis 1991, 39 Gebietsänderungen (die besetzten Gebiete einzeln), Städte der Region und die Teilungspläne von 1937 und 1947 als schematische Karte
   - **Deutsche Teilung** (`?thema=deutsche-teilung`): 57 Ereignisse von 1945 bis 1990 (Besatzungszonen, Berlin-Blockade, zwei Staaten, Mauer, Ostpolitik, Wiedervereinigung) und 14 Gebietsänderungen
 - Binnengrenzen, wo sie sich für die Zeit belegen lassen: Bundesstaaten und Provinzen der USA, Kanadas, Mexikos, Brasiliens und Australiens, Länder der Bundesrepublik, der DDR und Österreichs, Kantone der Schweiz, Teilrepubliken der Sowjetunion, Jugoslawiens und der Tschechoslowakei
+- Sprachumschalter **DE | EN** in der Kopfzeile (oder `?lang=en`): Oberfläche, Legende, Datumsangaben und „Über“-Dialog gibt es deutsch und englisch; Ereignistexte (Titel, Ort, Beschreibung) auch englisch; Gebietsänderungen und Kartenbeschriftungen bisher nur deutsch
 - Datum und Kartenausschnitt stehen in der Adresszeile, Ansichten lassen sich als Link teilen
 
 ## Lokal starten

@@ -3,6 +3,7 @@ import maplibregl from 'maplibre-gl';
 import { state } from '../state.js';
 import { STATUS_LABELS } from '../data/status.js';
 import { formatShort, toDay } from '../lib/dates.js';
+import { t, fmtNumber } from '../i18n.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
@@ -48,16 +49,16 @@ export function setupInteractions(map, { onEvent, isStateActive, isEventVisible 
 
 function stateHtml(p) {
   const status = STATUS_LABELS[p.st] ?? '';
-  const ruler = p.sn && p.st !== 'ind' ? (p.st === 'ann' ? ` durch ${p.sn}` : ` · ${p.sn}`) : '';
-  const from = p.s <= 19330130 ? 'vor 1933' : formatShort(toDay(p.s));
-  const to = p.e >= 19911231 ? 'nach 1991' : formatShort(toDay(p.e));
+  const ruler = p.sn && p.st !== 'ind' ? (p.st === 'ann' ? ` ${t('durch')} ${p.sn}` : ` · ${p.sn}`) : '';
+  const from = p.s <= 19330130 ? t('vor 1933') : formatShort(toDay(p.s));
+  const to = p.e >= 19911231 ? t('nach 1991') : formatShort(toDay(p.e));
   return `
     <div class="pop-title">${esc(p.n)}</div>
     <div class="pop-sub">${esc(status)}${esc(ruler)}</div>
     <div class="pop-facts">
-      ${p.cap ? `<span>Hauptstadt</span><b>${esc(p.cap)}</b>` : ''}
-      ${p.a ? `<span>Fläche</span><b>ca. ${Number(p.a).toLocaleString('de-DE')} km²</b>` : ''}
-      <span>Grenzen</span><b>${esc(from)} bis ${esc(to)}</b>
+      ${p.cap ? `<span>${t('Hauptstadt')}</span><b>${esc(p.cap)}</b>` : ''}
+      ${p.a ? `<span>${t('Fläche')}</span><b>${t('ca.')} ${fmtNumber(p.a)} km²</b>` : ''}
+      <span>${t('Grenzen')}</span><b>${esc(from)} ${t('bis')} ${esc(to)}</b>
     </div>`;
 }
 

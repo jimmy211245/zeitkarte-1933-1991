@@ -1,6 +1,8 @@
 // Datumshilfen. Intern zählt die App Tage ab dem 1.1.1900 (UTC), für Kartenfilter
 // wird das Datum als Ganzzahl JJJJMMTT verwendet (z. B. 19390901).
 
+import { LANG } from '../i18n.js';
+
 const DAY = 86400000;
 const EPOCH = Date.UTC(1900, 0, 1);
 
@@ -41,8 +43,15 @@ export function yearStart(y) {
   return toDay(y * 10000 + 101);
 }
 
-const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-const MONTHS_SHORT = ['Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.'];
+const EN = LANG === 'en';
+const MONTHS = EN
+  ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  : ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+const MONTHS_SHORT = EN
+  ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
+  : ['Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.'];
+// deutsch "1. Mai", englisch "1 May"
+const dayOf = (d) => (EN ? `${d}` : `${d}.`);
 
 export function parts(day) {
   const n = toYmd(day);
@@ -52,19 +61,19 @@ export function parts(day) {
 /** "1. September 1939" */
 export function formatLong(day) {
   const { y, m, d } = parts(day);
-  return `${d}. ${MONTHS[m - 1]} ${y}`;
+  return `${dayOf(d)} ${MONTHS[m - 1]} ${y}`;
 }
 
 /** "1. September" */
 export function formatDayMonth(day) {
   const { m, d } = parts(day);
-  return `${d}. ${MONTHS[m - 1]}`;
+  return `${dayOf(d)} ${MONTHS[m - 1]}`;
 }
 
 /** "1. Sept. 1939" */
 export function formatShort(day) {
   const { y, m, d } = parts(day);
-  return `${d}. ${MONTHS_SHORT[m - 1]} ${y}`;
+  return `${dayOf(d)} ${MONTHS_SHORT[m - 1]} ${y}`;
 }
 
 /** Formatiert ein Datum gemäß Genauigkeit: 'd' Tag, 'm' Monat, 'y' Jahr. */

@@ -16,6 +16,10 @@ import { setupMenu } from './ui/menu.js';
 import { renderLegend, setBlocLegend, setPlanLegend } from './ui/legend.js';
 import { createTimeEngine } from './map/timeengine.js';
 import { setupAbout } from './ui/about.js';
+import { t, tf, LANG, translateDocument, setupLangSwitch } from './i18n.js';
+
+translateDocument();
+setupLangSwitch(document.getElementById('lang-seg'));
 
 const DATA = new URL(`${import.meta.env.BASE_URL}data`, window.location.href).href.replace(/\/$/, '');
 
@@ -52,7 +56,10 @@ map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-left');
 map.addControl(
   new maplibregl.AttributionControl({
     compact: true,
-    customAttribution: 'Grenzen: <a href="https://icr.ethz.ch/data/cshapes/" target="_blank" rel="noopener">CShapes 2.0</a> (ETH Zürich, CC BY-NC-SA 4.0), ergänzt · Küsten, Flüsse, Binnengrenzen: Natural Earth',
+    customAttribution: tf(
+      'Grenzen: <a href="https://icr.ethz.ch/data/cshapes/" target="_blank" rel="noopener">CShapes 2.0</a> (ETH Zürich, CC BY-NC-SA 4.0), ergänzt · Küsten, Flüsse, Binnengrenzen: Natural Earth',
+      'Borders: <a href="https://icr.ethz.ch/data/cshapes/" target="_blank" rel="noopener">CShapes 2.0</a> (ETH Zurich, CC BY-NC-SA 4.0), supplemented · Coasts, rivers, internal borders: Natural Earth',
+    ),
   }),
 );
 // Auf schmalen Bildschirmen startet die Quellenangabe eingeklappt (Knopf „i“), sonst verdeckt sie
@@ -99,7 +106,16 @@ const labelsPromise = Promise.all([getJson('labels.json'), getJson('admin-labels
 });
 const adminPromise = getJson('admin.topo.json').then((t) => topoToGeoJSON(t));
 const plansPromise = getJson('plans.json');
-const [events, changes] = await Promise.all([getJson('events.json'), getJson('changes-list.json')]);
+const [events, changes, eventsEn] = await Promise.all([
+  getJson('events.json'),
+  getJson('changes-list.json'),
+  LANG === 'en' ? getJson('events.en.json').catch(() => []) : [],
+]);
+// Englische Fassung der Ereignisse (public/data/events.en.json, nach id): Titel, Ort und Text ersetzen
+for (const tr of eventsEn) {
+  const ev = events.find((e) => e.id === tr.id);
+  if (ev) Object.assign(ev, { title: tr.title, place: tr.place, text: tr.text });
+}
 const eventsById = new Map(events.map((e) => [e.id, e]));
 
 // --- Seitenleiste und Zeitband ----------------------------------------------------------------
@@ -364,7 +380,7 @@ subscribe((s, changed) => {
   }
   if (changed.includes('playing')) {
     playBtn.innerHTML = `<svg><use href="#i-${s.playing ? 'pause' : 'play'}"/></svg>`;
-    playBtn.title = s.playing ? 'Anhalten (Leertaste)' : 'Abspielen (Leertaste)';
+    playBtn.title = s.playing ? t('Anhalten (Leertaste)') : t('Abspielen (Leertaste)');
     if (s.playing) {
       if (s.day >= END) set({ day: START });
       playDay = tickDay = state.day;
