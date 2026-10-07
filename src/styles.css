@@ -279,6 +279,7 @@ svg { width: 18px; height: 18px; flex: none; }
 /* Detailansicht */
 .panel-detail { overflow-y: auto; flex: 1; padding: 0 0 20px; }
 .detail-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 8px 6px; border-bottom: 1px solid var(--rule); position: sticky; top: 0; background: var(--paper); }
+.detail-bar-end { display: inline-flex; align-items: center; }
 .detail-bar button { display: inline-flex; align-items: center; gap: 2px; border: 0; background: transparent; padding: 5px 8px; border-radius: 4px; font-size: 13px; color: var(--ink-2); }
 .detail-bar button:hover { background: var(--paper-2); color: var(--ink); }
 .detail-body { padding: 16px 18px 0; }

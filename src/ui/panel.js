@@ -210,7 +210,8 @@ export function createPanel({ events, changes, onFocus }) {
       lastCurrent = cur;
       currentIdx = idx;
       updatePeek();
-      if (cur && Date.now() - userScrolled > 2500) {
+      // bei ausgeblendeter Seitenleiste fehlen die Maße; beim Einblenden wird nachgeholt
+      if (cur && listEl.clientHeight > 0 && Date.now() - userScrolled > 2500) {
         // offsetTop zählt ab der Seitenleiste, nicht ab dem Listenanfang
         const top = cur.offsetTop - listEl.offsetTop - listEl.clientHeight / 3;
         listEl.scrollTop = Math.max(0, top);
@@ -234,7 +235,7 @@ export function createPanel({ events, changes, onFocus }) {
     set({ selection: { kind, id }, ...(jump ? { day: it.t, playing: false } : {}) });
     if (reveal && sheetMq.matches) setSheet(true);
     // ausgewählte Einträge (Klick auf Karte oder Zeitband) brauchen die Detailansicht
-    if (reveal && collapsed) setCollapsed(false);
+    if (reveal && collapsed && !sheetMq.matches) setCollapsed(false);
     onFocus(kind, it);
   }
 
@@ -242,14 +243,25 @@ export function createPanel({ events, changes, onFocus }) {
   const openBtn = document.getElementById('panel-open');
   let collapsed = false;
   try { collapsed = localStorage.getItem('panel-collapsed') === '1'; } catch { /* privat */ }
+  const collapseBtn = document.getElementById('panel-collapse');
+  let detailScroll = 0;
   function setCollapsed(c) {
+    // display: none setzt die Scrollposition zurück: Detailansicht merken, Liste springt zum aktuellen Eintrag
+    if (c && !collapsed) detailScroll = detailEl.scrollTop;
     collapsed = c;
     document.body.classList.toggle('panel-collapsed', c);
     openBtn.hidden = !c;
+    openBtn.setAttribute('aria-expanded', 'false');
+    collapseBtn.setAttribute('aria-expanded', String(!c));
+    if (!c) {
+      markCurrent(true);
+      detailEl.scrollTop = detailScroll;
+    }
     try { localStorage.setItem('panel-collapsed', c ? '1' : '0'); } catch { /* privat */ }
   }
-  document.getElementById('panel-collapse').addEventListener('click', () => setCollapsed(true));
-  openBtn.addEventListener('click', () => setCollapsed(false));
+  // der Fokus folgt dem Knopf, der gerade verschwindet
+  collapseBtn.addEventListener('click', () => { setCollapsed(true); openBtn.focus(); });
+  openBtn.addEventListener('click', () => { setCollapsed(false); collapseBtn.focus(); });
 
   function renderDetail() {
     const sel = state.selection;
@@ -303,7 +315,10 @@ export function createPanel({ events, changes, onFocus }) {
     detailEl.innerHTML = `
       <div class="detail-bar">
         <button type="button" data-act="back"><svg><use href="#i-back"/></svg>${t('Liste')}</button>
-        <button type="button" data-act="close" title="${t('Schließen')}"><svg><use href="#i-close"/></svg></button>
+        <span class="detail-bar-end">
+          <button type="button" class="panel-collapse" data-act="collapse" title="${t('Liste ausblenden, um die ganze Karte zu sehen')}" aria-label="${t('Liste ausblenden')}"><svg><use href="#i-back"/></svg></button>
+          <button type="button" data-act="close" title="${t('Schließen')}"><svg><use href="#i-close"/></svg></button>
+        </span>
       </div>
       <div class="detail-body">${body}</div>
       <div class="detail-nav">
@@ -321,6 +336,10 @@ export function createPanel({ events, changes, onFocus }) {
     const sel = state.selection;
     // Auf schmalen Bildschirmen geben Schließen und „Auf der Karte zeigen“ die Karte wieder frei
     if (b.dataset.act === 'back') set({ selection: null });
+    else if (b.dataset.act === 'collapse') {
+      setCollapsed(true);
+      openBtn.focus();
+    }
     else if (b.dataset.act === 'close') {
       set({ selection: null });
       setSheet(false);
